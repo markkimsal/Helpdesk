@@ -1,0 +1,19 @@
+CRM Technician Module
+================================================================================
+This module requires a group called "crmtech".  Only users assigned to this 
+group can access the crmtech module.
+
+This module has a file "media/crmtech_screen.css".  You should add this 
+file to your chosen templates directory.
+
+Installation
+================================================================================
+Add this to boot/local/default.ini
+	[path]
+	module.local.path=@sys.path@/local-modules
+	override.module.crmtech=@sys.path@/local-modules/crmtech
+
+Add a group with code "crmtech"
+
+Install the module "crm"
+

@@ -1,0 +1,50 @@
+
+
+<p>
+By using the Site, you are agreeing to comply with and be bound by the following terms of use. 
+Please review the following terms carefully. If you do not agree to these terms, you should not use this site. 
+The term "SITE" or "us" or "we" or "our" refers to __________, the owner of the Web site. The term "you" refers to the user or viewer of our Web site. 
+</p>
+
+<h3>
+Copyright
+</h3>
+<p>
+The content, organization, graphics, design, and other assets or matters related to the Site are protected under applicable copyrights, trademarks and other proprietary rights. The copying, redistribution, use or publication by you of any part of the Site, except as allowed by the "Permitted Uses" Section below, is prohibited. You do not acquire ownership rights to any content, document or other materials viewed through the Site.
+</p>
+
+<h3>
+Limitation of Liability
+</h3>
+<p>
+___________ will not be liable, to the extent applicable by law, for any damages or injury that accompany or result from your use of the Site.
+These include (but are not limited to) damages or injury caused by any:
+</p>
+
+<ul>
+    <li>Use of (or inability to use) the Site</li>
+	<li>Failure of the Site to perform in the manner expected or desired</li>
+	<li>Errors and omission on the Site</li>
+	<li>Interruption of availability of the Site</li>
+	<li>Delay in operation or transmission of the Site</li>
+</ul>
+
+<p>
+___________ is not liable for any damages, including, but not limited to:
+</p>
+
+<ul>
+	<li>Damages intended to compensate someone directly for a loss of income</li>
+	<li>Consequential damages related to a loss of income</li>
+	<li>Other incidental damages</li>
+</ul>
+
+<h3>
+Termination of This Agreement
+</h3>
+<p>
+This agreement is effective until terminated by either party.  You may terminate the Agreement at any time by 
+sending correspondence via electronic mail or postal mail stating that you wish to terminate this agreement.
+</p>
+
+

@@ -1,0 +1,196 @@
+
+#crm_main p {
+	margin-top:0px;
+	margin-bottom:7px;
+}
+#crm_main .crm-hdr {
+color: #EEE; 
+margin-bottom: .5em;
+padding: .25em .5em;
+background-color: #777;
+}
+
+/** wrapper for each post that is not the first post **/
+.issue-post {
+	border-top:1px solid #eee;
+	padding-top:7px;
+}
+/** wrapper for the first post **/
+.issue-post-first {
+}
+
+.issue-post-controls form {
+display:none;
+}
+.issue-post-controls {
+clear:left;
+margin-bottom:1em;
+}
+.issue-post-metadata {
+clear:left;
+}
+.issue-post-content {
+	margin-left:58px;
+}
+
+.issue-post-content iframe{
+width:100%;
+}
+
+.issue-new {
+padding-left:10px;border-left:4px solid blue;
+}
+.issue-don {
+padding-left:10px;border-left:4px solid silver;
+}
+.issue-rop {
+padding-left:10px;border-left:4px solid #071;
+}
+.issue-inf {
+padding-left:10px;border-left:4px solid #709;
+}
+
+
+
+.avatar {
+float:left;
+margin-right:.5em;
+}
+
+/* Menu */
+.crm_menu {
+	margin: 0; padding:none;
+	font: bold 12px/26px Verdana, Arial, Tahoma, Sans-serif;
+	height: 26px;
+	width:140px;
+}
+.crm_menu ul {
+	margin: none; padding:none;
+	float: left;
+	list-style: none;
+	margin:0; padding: 0;
+}
+.crm_menu ul li {
+	margin-bottom: .5em; padding:  .25em 1em .25em .5em;
+	display: block;
+	background-color: #c0c0c0;
+}
+.crm_menu ul li a {
+	margin: none; padding: none;
+	display: inline;
+	color: #333;
+	text-decoration: none;
+	height: 26px;
+}
+.crm_menu ul li:hover {
+	background-color: #ECECEC;
+	color: #333;	
+}
+
+/**
+ * toolbar
+ */
+#toolbar { 
+  border: 1px solid black; 
+  margin: 0 auto 1em auto; 
+  padding: .25em .1em; 
+  background: #DDD ; 
+} 
+.adm_toolbtn button { 
+  cursor:pointer;
+  border:none;
+  background-color:transparent;
+  border-color:transparent;
+  border-width:1.5px;
+  border-style:solid;
+  display:-moz-inline-box;
+
+}
+.adm_toolbtn button:hover { 
+  background: url(images/sprite.png) repeat-x scroll 0 -1300px; 
+  border-color:#808080;
+  border-width:1.5px;
+  border-style:solid;
+  display:-moz-inline-box;
+} 
+
+
+
+/* form style
+ */
+.cgn_form_cell_label {
+/* font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; */
+ color: #22486B;
+ text-align: right;
+ font-size:150%;
+ background-color: transparent;
+ width: 220px;
+}
+
+.cgn_form_cell_input {
+ background-color: #F2F7FB;
+ color: #000000;
+ text-align: left;
+ font-size:110%;
+ margin-right: 0px;
+ padding-right: 0px;
+}
+
+
+.cgn_form_cell_input input {
+ /* font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; */
+ background-color: #D7E5F2;
+ color: #102132;
+ /* border: 1px solid #284279; */
+ border: 1px solid #666; 
+ margin-right: 0px;
+}
+
+
+.cgn_form_cell_input select {
+/*  font: 11px Verdana, Geneva, Arial, Helvetica, sans-serif; */
+ background-color: #D7E5F2;
+ color: #102132;
+ /* border: 1px solid #284279; */
+ border: 1px solid #666; 
+}
+
+.data_form TABLE {
+ background-color: #F9FBFD;
+ color: #000000;
+ width: 620px;
+ /* border: 1px solid #D7E5F2; */
+ border: 1px solid #666;
+ border-collapse: collapse;
+}
+
+.data_form TABLE TR TD {
+ /* border: 1px solid #D7E5F2; */
+ border: 1px solid #CCC;
+ padding-left: 4px;
+}
+
+/* data table */
+.grid_1 {
+        border-collapse:collapse;
+        width:100%;
+        margin:0 auto 1em auto;
+}
+/* .data_table THEAD TR { */
+.grid_1_tr_h {
+        background:#4D4D4D none repeat scroll 0%;
+        border-bottom:2px solid #000000;
+        border-right:1px solid #808080;
+        border-top:2px solid #808080;
+        color:#FFFFFF;
+        margin:3px 2px;
+        padding:5px 5px 5px 10px;
+}
+
+.grid_1 TBODY TR.data_tr_odd {
+        background-color:#F2F2F2;
+}
+.grid_1 TBODY TR:hover  {
+        background-color:khaki;
+}
+
