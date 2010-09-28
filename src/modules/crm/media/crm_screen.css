@@ -37,19 +37,24 @@ clear:left;
 width:100%;
 }
 
-.issue-new {
+.issue-acc {
 padding-left:10px;border-left:4px solid blue;
 }
 .issue-don {
 padding-left:10px;border-left:4px solid silver;
 }
-.issue-rop {
-padding-left:10px;border-left:4px solid #071;
+.issue-fix {
+padding-left:10px;border-left:4px solid silver;
 }
 .issue-inf {
 padding-left:10px;border-left:4px solid #709;
 }
-
+.issue-new {
+padding-left:10px;border-left:4px solid blue;
+}
+.issue-rop {
+padding-left:10px;border-left:4px solid #071;
+}
 
 
 .avatar {
