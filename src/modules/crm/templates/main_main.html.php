@@ -14,7 +14,7 @@ echo "<h2>".$t['acctName']."</h2>";
 <form method="POST" action="<?=cgn_appurl('crm', 'issue', 'save', '', 'https');?>">
 <textarea name="ctx" cols="50" rows="1"></textarea>
 <br/>
-<input type="submit" name="sbmt_button" id="new_question_btn" value="Post Question" style="display:none;"/>
+<input type="submit" name="sbmt_button" id="new_question_btn" value="Post" style="display:none;"/>
 </form >
 </div>
 
@@ -45,7 +45,7 @@ No questions.
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$_issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">
 
-		<b><?=$_issue->get('user_name');?></b>	<?=date('F d, Y', $_issue->get('post_datetime'));?> &mdash; <?=$_issue->getStatusLabel();?> <br/>
+		<b><?=$_issue->get('user_name');?></b>	<span class="timestamp" style="display:none;"><?=date('c', $_issue->get('post_datetime'));?></span> <span class="fulldate"><?=date('F d, Y', $_issue->get('post_datetime'));?></span> &mdash; <?=$_issue->getStatusLabel();?> <br/>
 		</div>
 		
 		<div class="issue-post-content">
@@ -148,11 +148,17 @@ No files.
 			$(e.target).animate({height:'6em'});
 			$("#new_question_btn").show();
 		});
-		/*
 		$("TEXTAREA").bind('blur', function(e) {
-			$(e.target).animate({height:'2em'});
+			console.log ($(e.target).val());
+			if ($(e.target).val() == '') {
+				$(e.target).animate({height:'2em'});
+			}
 		});
-		 */
+
+
+		$(".timestamp").cuteTime();
+		$(".timestamp").css('display', 'inline');
+		$(".fulldate").css('display', 'none');
 	});
 -->
 </script>

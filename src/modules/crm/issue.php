@@ -18,6 +18,7 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 	public function eventBefore($req, &$t) {
 		Cgn_Template::setPageTitle('Support Issues');
 		Cgn_Template::addSiteCss('crm_screen.css');
+		Cgn_Template::addSiteJs('crm_cutetime.js');
 	}
 
 	function mainEvent($req, &$t) {

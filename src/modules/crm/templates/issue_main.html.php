@@ -54,7 +54,7 @@ No questions.
 	<div class="<?=$issueCssClass. ' '.$issueCssAdditional;?>">
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$_issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">
-	    <b><?=$_issue->get('user_name');?></b>: <?=date('F d, Y', $_issue->get('post_datetime'));?> &mdash; Status: <?=$_issue->getStatusLabel();?><br/>
+	    <b><?=$_issue->get('user_name');?></b>: <span class="timestamp" style="display:none;"><?=date('c', $_issue->get('post_datetime'));?></span>  <span class="fulldate"><?=date('F d, Y', $_issue->get('post_datetime'));?></span> &mdash; Status: <?=$_issue->getStatusLabel();?><br/>
 		
 		<div id="content_<?=$_issue->getPrimaryKey();?>" class="issue-post-content">
 		<?php echo $_issue->get('preview');?>
@@ -106,11 +106,17 @@ No questions.
 			$(e.target).animate({height:'6em'});
 			$("#new_question_btn").show();
 		});
-		/*
 		$("TEXTAREA").bind('blur', function(e) {
-			$(e.target).animate({height:'2em'});
+			console.log ($(e.target).val());
+			if ($(e.target).val() == '') {
+				$(e.target).animate({height:'2em'});
+			}
 		});
-		 */
+
+		$(".timestamp").cuteTime();
+		$(".timestamp").css('display', 'inline');
+		$(".fulldate").css('display', 'none');
+
 
 		$(".issue-read-all").bind('click', function(e) {
 			var t = e.target.id;
@@ -124,7 +130,7 @@ No questions.
 			//load up comments
 			var container = $("#comments_"+id);
 			showLoadingPane(container); 
-			container.load('<?=cgn_appurl('crm', 'issue', 'quickReplies', array('c'=>$t['c'], 'xhr'=>1), 'https');?>id='+id);
+			container.load('<?=cgn_appurl('crm', 'issue', 'quickReplies', array('c'=>$t['c'], 'xhr'=>1), 'https');?>id='+id, humanTime);
 			//$("#comments_"+id).attr('src', '<?=cgn_appurl('crm', 'issue', 'quickReplies');?>/id='+id);
 		});
 		$(".issue-reply").bind('click', function(e) {
@@ -160,15 +166,24 @@ No questions.
 				//need to replace the event in the string because a failure
 				//to have jquery run properly should result in a 
 				//complete page load
+				console.log($url);
+				console.log($target.parent());
 				$url = $url.replace(".issue", ".issue.quickReplies");
 				$parent = $target.parent().parent().parent();
 				showLoadingPane($parent); 
 //				$parent.empty(); 
-				$parent.load($url); 
+				$parent.load($url, humanTime);
 				return false;
 			}
 		});
 	});
+
+	function humanTime() {
+		$(".timestamp").cuteTime();
+		$(".timestamp").css('display', 'inline');
+		$(".fulldate").css('display', 'none');
+	}
+
 	/**
 	 * show a div with a loading graphic
 	 */

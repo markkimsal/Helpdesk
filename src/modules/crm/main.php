@@ -20,6 +20,7 @@ class Cgn_Service_Crm_Main extends Cgn_Service {
 	public function eventBefore($req, &$t) {
 		Cgn_Template::setPageTitle('Support Home');
 		Cgn_Template::addSiteCss('crm_screen.css');
+		Cgn_Template::addSiteJs('crm_cutetime.js');
 	}
 
 	function mainEvent($req, &$t) {
