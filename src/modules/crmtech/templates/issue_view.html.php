@@ -1,7 +1,19 @@
 <?php
 echo $t['pageNav'];
 $issue = $t['issue'];
+
+
+$issueCssClass = 'issue-post-first';
+$issueCssAdditional = strtolower($issue->getStatusStyle());
 ?>
+
+<?php
+echo "<h2>Question From ".$t['account']->get('org_name')."</h2>";
+?>
+
+
+
+		<div class="<?=$issueCssClass. ' '.$issueCssAdditional;?>">
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">
 		Status: <?=$issue->getStatusLabel();?> <br/>
@@ -35,6 +47,7 @@ $issue = $t['issue'];
 			<input type="hidden" name="thread_id" value="<?=$issue->getPrimaryKey();?>"/>
 			</form >
 
+		</div>
 		</div>
 
 

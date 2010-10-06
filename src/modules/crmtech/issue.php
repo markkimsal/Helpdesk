@@ -167,6 +167,9 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 			$statusNames[$_id] = Crm_Issue_Model::_getStatusLabelStatic($_id);
 		}
 		$t['statusList'] = $statusNames;
+
+		$t['account'] = new Cgn_DataItem('crm_acct');
+		$t['account']->load($this->dataModel->get('crm_acct_id'));
 	}
 
 	/**
