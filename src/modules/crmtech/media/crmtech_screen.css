@@ -6,7 +6,9 @@
   margin: 0 auto 1em auto; 
   padding: .25em .1em; 
   background: #DDD ; 
+  background: url(images/sprite.png) repeat-x scroll 0 0; 
 } 
+
 .adm_toolbtn button { 
   cursor:pointer;
   border:none;

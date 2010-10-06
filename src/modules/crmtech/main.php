@@ -33,6 +33,7 @@ class Cgn_Service_Crmtech_Main extends Cgn_Service {
 
 		Cgn_Template::setPageTitle('CRM Tech');
 		Cgn_Template::addSiteCss('crm_screen.css');
+		Cgn_Template::addSiteCss('crmtech_screen.css');
 	}
 
 	public function _makeToolbar() {
@@ -66,7 +67,7 @@ class Cgn_Service_Crmtech_Main extends Cgn_Service {
 		$quest = $this->_findPendingQuestions();
 		$t['questHeader'] = '<h2>Latest Issue Activity</h2>';
 		$t['quest'] = $this->_makeQuestionTable($quest);
-		$t['quest']->attribs = array('cellpadding'=>'7');
+//		$t['quest']->attribs = array('cellpadding'=>'7');
 
 
 		$files = $this->_findPendingFiles();
