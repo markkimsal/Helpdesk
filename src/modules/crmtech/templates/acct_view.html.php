@@ -5,6 +5,14 @@ echo $t['toolbar']->toHtml();
 echo $t['viewTable']->toHtml();
 ?>
 
+<br style="clear:right;"/>
+<h3>Owner</h3>
+
+<?php
+echo $t['ownerTable']->toHtml();
+?>
+
+
 <div id="crm_main">
 <div>
 
@@ -23,7 +31,9 @@ echo $t['viewTable']->toHtml();
 
 </div>
 </div>
-<br style="clear:both;"/>
+
+
+<br style="clear:right;"/>
 <?
 echo $t['questHeader'];
 ?>

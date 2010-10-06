@@ -82,11 +82,27 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 	}
 
 	/**
-	 * Show account info and a list of issues
+	 * Show account info, owner info, and a list of issues
 	 */
 	public function viewEvent($req, &$t) {
 		parent::viewEvent($req, $t);
-		$t['acct_id'] = $this->dataModel->get('crm_acct_id');
+
+		//load the user who started this group
+		$ownerId = $this->dataModel->get('owner_id');
+		$u = Cgn_User::load($ownerId);
+		$u->fetchAccount();
+		$t['owner'] = $u;
+		$dataModel = array();
+		$dataModel[] = array('Username', $u->username);
+		$dataModel[] = array('E-mail',   $u->email);
+		$dataModel[] = array('Name',     $u->account->get('lastname').', '.$u->account->get('firstname'));
+
+
+		$dm = new Cgn_Mvc_TableModel($dataModel);
+		$dm->data = $dataModel;
+		$t['ownerTable'] = new Cgn_Mvc_TableView($dm);
+
+		$t['acct_id']    = $this->dataModel->get('crm_acct_id');
 
 		$quest = $this->_findAcctIssues($req->cleanInt('id'));
 		$t['questHeader'] = '<h3>Latest Issues</h3>';
