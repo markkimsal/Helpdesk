@@ -1,12 +1,13 @@
 
-<br style="clear:both;"/>
 
 <?php
 echo $t['toolbar']->toHtml();
 ?>
 
 
-<h3>Find Questions by Status</h3>
+<a href="<?php echo cgn_appurl('crm');?>">go to CRM</a>
+
+<h3 style="padding-top:.5em;">Find Questions by Status</h3>
 <?php
 //var_dump($t['questStatus']);
 
@@ -19,7 +20,7 @@ foreach ($t['questStatus'] as $_rec) {
 echo implode(' | ', $_links)
 ?>
 
-<div style="clear:both;width:100%">
+<div style="clear:right;width:100%">
 <?php
 echo $t['questHeader'];
 echo $t['quest']->toHtml();
