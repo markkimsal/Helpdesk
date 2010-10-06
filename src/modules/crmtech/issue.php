@@ -389,7 +389,7 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 		Cgn::loadModLibrary('Crm::Crm_Issue');
 		$finder = new Crm_Issue_Model_List();
 		$finder->dataItem->andWhere('thread_id', $id);
-		$finder->dataItem->sort('post_datetime', 'DESC');
+		$finder->dataItem->sort('post_datetime', 'ASC');
 		$finder->_rsltByPkey = FALSE;
 		return $finder->loadVisibleList();
 	}

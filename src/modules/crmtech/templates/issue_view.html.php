@@ -58,13 +58,13 @@ No replies.
 <?php
 } else {
 ?>
-<h5 style="color:#EEE; padding:.25em .5em;background-color:#777">Comments: 0</h5>
+	<h5 style="color:#EEE; padding:.25em .5em;background-color:#777">Comments: <?php echo count($t['replyList']);?></h5>
 <?php
 	foreach ($t['replyList'] as $_issue) {
 ?>
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$_issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">
-		On <?=date('F d, Y', $_issue->get('post_datetime'));?> <a href="#"><?=$_issue->get('user_name');?></a> said:
+		On <?=date('F d, Y - H:i:s', $_issue->get('post_datetime'));?> <a href="#"><?=$_issue->get('user_name');?></a> said:
 		</div>
 		
 		<div id="loaded_<?=$_issue->getPrimaryKey();?>" class="issue-post-content">
