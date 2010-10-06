@@ -8,16 +8,20 @@ class Crm_Acct extends Cgn_Data_Model {
 	public $tableName =  'crm_acct';
 	public $sharingModeRead = '';
 
-
 	public function initDataItem() {
 		parent::initDataItem();
-		$this->dataItem->org_name = '';
-		$this->dataItem->is_active = 0;
-		$this->dataItem->org_account_id = NULL;
-		$this->dataItem->agreement_date = '';
-		$this->dataItem->agreement_ip_addr = '';
+		$this->dataItem->org_name           = '';
+		$this->dataItem->is_active          = 0;
+		$this->dataItem->org_account_id     = NULL;
+		$this->dataItem->agreement_date     = '';
+		$this->dataItem->agreement_ip_addr  = '';
 
-		$this->dataItem->_nuls[] = 'org_account_id';
+		$this->dataItem->_nuls[]            = 'org_account_id';
+
+		$this->_typeMap['agreement_date']   = 'date';
+		$this->_typeMap['created_on']       = 'date';
+		$this->_typeMap['approved_on']      = 'date';
+		$this->_typeMap['is_active']        = 'bool';
 	}
 
 	/**
