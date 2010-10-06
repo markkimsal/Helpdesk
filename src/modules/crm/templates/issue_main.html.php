@@ -3,7 +3,7 @@ echo "<h2>".$t['acctName']."</h2>";
 ?>
 
 <div id="crm_main">
-<div style="text-align:left;float:right;width:83%">
+<div id="crm_main_sub">
 
 <div class="crm-hdr">Ask a Question
 <br/>
@@ -63,7 +63,7 @@ No questions.
 		<?php echo $_issue->get('message');?>
 
 			<h5 style="color:#EEE; padding:.25em .5em;background-color:#777">Comments: <?=$_issue->getReplyCount();?></h5>
-				<div style="background-color:#eee;border:1px solid black;margin-top:-1em;" id="comments_<?=$_issue->getPrimaryKey();?>"></div>
+				<div style="background-color:#eee;border:1px solid black;margin-top:-0.2em;padding:.5em;" id="comments_<?=$_issue->getPrimaryKey();?>"></div>
 		</div>
 		</div>
 
@@ -107,7 +107,7 @@ No questions.
 			$("#new_question_btn").show();
 		});
 		$("TEXTAREA").bind('blur', function(e) {
-			console.log ($(e.target).val());
+			//console.log ($(e.target).val());
 			if ($(e.target).val() == '') {
 				$(e.target).animate({height:'2em'});
 			}
@@ -166,8 +166,8 @@ No questions.
 				//need to replace the event in the string because a failure
 				//to have jquery run properly should result in a 
 				//complete page load
-				console.log($url);
-				console.log($target.parent());
+				//console.log($url);
+				//console.log($target.parent());
 				$url = $url.replace(".issue", ".issue.quickReplies");
 				$parent = $target.parent().parent().parent();
 				showLoadingPane($parent); 
