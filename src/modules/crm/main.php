@@ -25,6 +25,11 @@ class Cgn_Service_Crm_Main extends Cgn_Service {
 
 	function mainEvent($req, &$t) {
 		$u = $req->getUser();
+		if ($u->belongsToGroup('crmtech')) {
+			$t['isTech'] = true;
+		} else {
+			$t['isTech'] = false;
+		}
 
 		//find cached account ID, or do a look up
 		$accountId = $req->getSessionVar('crm_acct_id');
