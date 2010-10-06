@@ -1,4 +1,7 @@
-
+		<div class="data_table_pager" align="center">
+		See all replies...
+		</div>
+<!--
 		<div class="data_table_pager" align="center">
 		Browse more replies:
 		<a class="issue-comment-pager" href="<?=$t['prevUrl'];?>">
@@ -10,6 +13,7 @@
 		</a>  
 
 		</div>
+-->
 
 
 <?php

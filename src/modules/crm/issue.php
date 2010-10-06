@@ -126,9 +126,10 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 		$finder->dataItem->andWhere('crm_acct_id', $accountId);
 		$finder->dataItem->andWhere('thread_id', $id);
 		$finder->dataItem->sort('post_datetime', 'DESC');
-		$finder->dataItem->limit(1, $page-1);
+		$finder->dataItem->limit(3, $page-1);
 		$finder->_rsltByPkey = FALSE;
-		return $finder->loadVisibleList();
+		$replyList = $finder->loadVisibleList();
+		return array_reverse($replyList);
 	}
 
 	/**
