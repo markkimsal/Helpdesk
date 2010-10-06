@@ -238,7 +238,14 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 
 		$accountId = $parent->get('crm_acct_id');
 
+
 		$comment = $req->cleanMultiLine('ctx');
+		if (trim($comment) == '') {
+			//we just saved the status change, don't save a new reply.
+			$t['url'] = cgn_appurl('crmtech', '', '', '', 'https');
+			$this->presenter = 'redirect';
+			return;
+		}
 		$name = $u->getDisplayName();
 		$issue->set('message', $comment);
 		$issue->set('post_datetime', time());
