@@ -38,6 +38,7 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 	 */
 	public function eventBefore($req, &$t) {
 		Cgn_Template::addSiteCss('crm_screen.css');
+		Cgn_Template::addSiteCss('crmtech_screen.css');
 		$t['pageNav'] = '<div><a href="'.cgn_appurl('crmtech').'">Back to CRM home</a></div>';
 	}
 
