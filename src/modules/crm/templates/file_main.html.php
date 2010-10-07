@@ -43,6 +43,9 @@ No files.
 				style="padding-right:1em;padding-bottom:.5em;" align="left"/>
 
 		<a href="<?=cgn_appurl('crm', 'download', '', array('id'=>$_issue->get('crm_file_id')), 'https').$_issue->get('link_text');?>"><?php echo $_issue->get('title');?></a>
+		<p>
+			Uploaded on: <?php echo date('Y-m-d', $_issue->get('published_on'));?>
+		</p>
 
 		<p>
 		<?= $_issue->get('description');?>
