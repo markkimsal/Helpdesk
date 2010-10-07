@@ -12,7 +12,7 @@
 	margin-bottom:7px;
 }
 
-#crm_main .crm-hdr {
+.crm-hdr {
 color: #EEE; 
 margin-bottom: .5em;
 padding: .25em .5em;
@@ -27,7 +27,13 @@ background-color: #777;
 .issue-post {
 	border-top:1px solid #eee;
 	padding-top:7px;
+	width:40em;
 }
+
+.issue-post-hover {
+	border-top:3px solid #EEF;
+}
+
 /** wrapper for the first post **/
 .issue-post-first {
 }
@@ -49,6 +55,11 @@ margin-bottom:1em;
 
 .issue-post-content iframe{
 width:100%;
+}
+
+.issue-post-reply {
+ border:3px solid #fff;
+ width:40em;clear:right;padding:.25em;
 }
 
 .issue-acc {

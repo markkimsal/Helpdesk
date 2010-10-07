@@ -3,7 +3,7 @@ echo $t['pageNav'];
 $issue = $t['issue'];
 
 
-$issueCssClass = 'issue-post-first';
+$issueCssClass = 'issue-post issue-post-first';
 $issueCssAdditional = strtolower($issue->getStatusStyle());
 ?>
 
@@ -20,6 +20,10 @@ echo "<h2>Question From ".$t['account']->get('org_name')."</h2>";
 		On <?=date('F d, Y', $issue->get('post_datetime'));?> <a href="#"><?=$issue->get('user_name');?></a> said:
 		</div>
 		
+		<div class="issue-post-delete" style="display:none;">
+		<button title="delete" data-id="<?php echo $issue->getPrimaryKey();?>" onclick="deleteThread(this);">X</button>
+		</div>
+
 		<div id="content_<?=$issue->getPrimaryKey();?>" class="issue-post-content">
 		<?php echo $issue->get('message');?>
 		</div>
@@ -62,13 +66,21 @@ No replies.
 <?php
 	foreach ($t['replyList'] as $_issue) {
 ?>
+		<div class="issue-post-reply" id="reply_<?=$_issue->getPrimaryKey();?>" >
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$_issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">
 		On <?=date('F d, Y - H:i:s', $_issue->get('post_datetime'));?> <a href="#"><?=$_issue->get('user_name');?></a> said:
 		</div>
-		
+
+		<div class="issue-post-reply-delete" style="display:none;">
+		<button title="delete" data-id="<?php echo $_issue->getPrimaryKey();?>" onclick="deleteReply(this);">X</button>
+		</div>
+	
 		<div id="loaded_<?=$_issue->getPrimaryKey();?>" class="issue-post-content">
 		<?php echo $_issue->get('message');?>
+		</div>
+
+		<br style="clear:right;"/>
 		</div>
 
 <?php
@@ -92,7 +104,91 @@ No replies.
 			e.stopPropagation();
 		});
 
+		$(".issue-post-reply").bind('mouseover', function(e) {
+			var t = $(e.target);
+			while (t.attr('class') != 'issue-post-reply') {
+				t = t.parent();
+			}
+			t.css('border', '3px solid #CCF');
+			$(".issue-post-reply-delete", t).css('top', (t.position().top+5)+'px');
+			$(".issue-post-reply-delete", t).css('right', (t.position().left+400)+'px');
+			$(".issue-post-reply-delete", t).css('position', 'absolute');
+			$(".issue-post-reply-delete", t).css('display', '');
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		$(".issue-post-reply").bind('mouseout', function(e) {
+			var t = $(e.target);
+			while (t.attr('class') != 'issue-post-reply') {
+				t = t.parent();
+			}
+			t.css('border', '3px solid #FFF');
+			$(".issue-post-reply-delete", t).css('display', 'none');
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		$(".issue-post").bind('mouseout', function(e) {
+			var t = $(e.target);
+			var kill=10;
+			while (t.attr('class').indexOf('issue-post ')==-1 && kill > 0) {
+				kill--;
+				t = t.parent();
+			}
+			t.removeClass('issue-post-hover');
+			$(".issue-post-delete", t).css('display', 'none');
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		$(".issue-post").bind('mouseover', function(e) {
+			var t = $(e.target);
+			var kill=10;
+			while (t.attr('class').indexOf('issue-post ')==-1 && kill > 0) {
+				kill--;
+				t = t.parent();
+			}
+			t.addClass('issue-post-hover');
+			$(".issue-post-delete", t).css('top', (t.position().top+5)+'px');
+			$(".issue-post-delete", t).css('right', (t.position().left+400)+'px');
+			$(".issue-post-delete", t).css('position', 'absolute');
+			$(".issue-post-delete", t).css('display', '');
+			e.preventDefault();
+			e.stopPropagation();
+		});
 
 	});
+
+	function deleteReply(thisObj) {
+		if (!confirm("Delete this reply?")) {
+			return false;
+		}
+		$(thisObj).css('display', 'none');
+		var delid = $(thisObj).attr('data-id');
+		$.ajax({
+			async:true,
+			data: "id="+delid+"&xhr=1",
+			url: "<?php echo cgn_appurl('crmtech', 'issue', 'delreply');?>",
+			success: function(){
+				$("#reply_"+delid).empty().remove();
+			}});
+	}
+
+	function deleteThread(thisObj) {
+		if (!confirm("Delete thread and all replies?")) {
+			return false;
+		}
+		$(thisObj).css('display', 'none');
+		var delid = $(thisObj).attr('data-id');
+		$.ajax({
+			async:true,
+			data: "id="+delid+"&xhr=1",
+			url: "<?php echo cgn_appurl('crmtech', 'issue', 'del');?>",
+			success: function(){
+				window.location.href="<?php echo cgn_sappurl('crmtech');?>";
+			}});
+	}
+
 -->
 </script>

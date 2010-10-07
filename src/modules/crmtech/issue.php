@@ -110,6 +110,38 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 	}
 
 	/**
+	 * Delete one reply
+	 */
+	public function delreplyEvent($req, &$t) {
+
+		$id = $req->cleanInt('id');
+		$isAjax = $req->cleanString('xhr');
+		$eraser = new Cgn_DataItem('crm_issue');
+		$eraser->andWhere('crm_issue_id', $id);
+		$eraser->delete();
+
+	}
+
+	/**
+	 * Delete entire thread reply
+	 */
+	public function delEvent($req, &$t) {
+
+		$id = $req->cleanInt('id');
+		$isAjax = $req->cleanString('xhr');
+		$eraser = new Cgn_DataItem('crm_issue');
+		$eraser->andWhere('crm_issue_id', $id);
+		$eraser->delete();
+
+		$eraser = new Cgn_DataItem('crm_issue');
+		$eraser->andWhere('thread_id', $id);
+		$eraser->delete();
+
+	}
+
+
+
+	/**
 	 * Load 1 data item and place it in the template array.
 	 */
 	function viewEvent($req, &$t) {
@@ -376,6 +408,12 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 	 */
 	function _textToHtml($_i) {
 		$m = htmlentities($_i->get('message'));
+		$m = trim($m);
+		if ($m == '') {
+			$_i->set('preview', '<p>&nbsp</p>');
+			$_i->set('message', '<p>&nbsp</p>');
+			return;
+		}
 		$p = substr(htmlentities($_i->get('message')), 0, 200);
 		$m = str_replace("\r", "\n", $m);
 		$m = str_replace("\n\n", "\n", $m);

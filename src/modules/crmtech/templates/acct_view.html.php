@@ -13,7 +13,6 @@ echo $t['ownerTable']->toHtml();
 ?>
 
 
-<div id="crm_main">
 <div>
 
 <div class="crm-hdr">Ask a Question
@@ -29,7 +28,6 @@ echo $t['ownerTable']->toHtml();
 </form >
 </div>
 
-</div>
 </div>
 
 
