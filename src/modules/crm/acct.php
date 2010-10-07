@@ -16,7 +16,7 @@ Cgn::loadModLibrary("Crm::Crm_Acct");
  */
 class Cgn_Service_Crm_Acct extends Cgn_Service {
 
-	public $requireLogin = TRUE;
+	public $requireLogin = FALSE;
 	public $usesConfig   = TRUE;
 
 	public function eventBefore($req, &$t) {
@@ -24,20 +24,156 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		Cgn_Template::addSiteCss('crm_screen.css');
 	}
 
-	function mainEvent($req, &$t) {
-
+	/**
+	 * Show some account info and a form to invite new users
+	 */
+	public function mainEvent($req, &$t) {
+		Cgn::loadModLibrary('Crm::Crm_Acct');
 		$u = $req->getUser();
-		$account = $this->_findPendingSupport($u);
-		if (is_object($account)) {
-			$this->templateName = 'acct_pending';
-			$t['email'] = $u->email;
+		//find cached account ID
+		$accountId = $req->getSessionVar('crm_acct_id');
+		if (!$accountId) {
+			$account = Crm_Acct::findSupportAccount($u);
+			if ($account) {
+				$accountId = $account->getPrimaryKey();
+			} else {
+				$u->addMessage('Permission denied', 'msg_warn');
+				return false;
+			}
 		} else {
-			$this->templateName = 'acct_noaccess';
-			$t['form'] = $this->_loadApplyForm($values);
+			$account = new Cgn_DataItem('crm_acct');
+			$account->load($accountId);
 		}
+		$t['acctName'] = $account->get('org_name');
+		$t['acctId'] = $accountId;
+
+
+		$t['inviteForm'] = $this->_loadInviteForm($u);
 	}
 
-	function applyEvent($req, &$t) {
+	/**
+	 * Accept invitations
+	 */
+	public function acceptinviteEvent($req, &$t) {
+		$u = $req->getUser();
+		$tkcode = $req->cleanString('tk');
+		$finder = new Cgn_DataItem('crm_invite');
+		$finder->andWhere('ticket_code', $tkcode);
+//		$finder->andWhere('accepted_on', null, 'IS');
+		$ticketList = $finder->find();
+		$ticket = null;
+		foreach ($ticketList as $_tk) {
+			$ticket = $_tk;
+		}
+		if ($ticket == null) {
+		var_dump($ticket);exit();
+			$u->addSessionMessage('Your invitation may have expired.', 'msg_err');
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_appurl('crm');
+			return;
+		}
+
+
+		$t['passwordForm'] = $this->_loadPasswordForm($tkcode);
+
+		/*
+		$u->addSessionMessage('Your invitation has been accepted.');
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_appurl('crm');
+		 */
+
+	}
+
+
+	public function activateEvent($req, &$t) {
+		$u = $req->getUser();
+		$this->acceptinviteEvent($req, $t);
+		if ($this->presenter == 'redirect') {
+			return;
+		}
+		unset($t['passwordForm']);
+		//ticket has been validated from acceptinviteEvent
+		$tkcode = $req->cleanString('tk');
+		$invite  = new Cgn_DataItem('crm_invite');
+		$invite->load( array('ticket_code= "'.$tkcode.'"') );
+		if ($invite->_isNew) {
+			$u->addSessionMessage('Your invitation may have expired.', 'msg_err');
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_appurl('crm');
+			return;
+		}
+		$crmAcctId = $invite->get('crm_acct_id');
+		$crmAcctObj = new Crm_Acct($crmAcctId);
+		$orgAcctId = $crmAcctObj->get('org_account_id');
+
+		$newUser = new Cgn_User();
+		$newUser->username =  $invite->get('email');
+		$newUser->mail     =  $invite->get('email');
+		$newUser->setPassword( $req->cleanString('pwd1') );
+		$result = Cgn_User::registerUser($newUser);
+		$newUser->bindSession();
+		$newUserId = $newUser->userId;
+		$orgMembership = new Cgn_DataItem('cgn_user_org_link');
+		$orgMembership->set('cgn_org_id', $orgAcctId);
+		$orgMembership->set('cgn_user_id', $newUserId);
+		$orgMembership->set('joined_on', time());
+		$orgMembership->set('is_active', 1);
+		$orgMembership->set('role_code', 'member');
+		$orgMembership->set('inviter_id', $invite->get('inviter_id'));
+		$orgMembership->save();
+
+		$invite->set('accepted_on', time());
+		$invite->set('accepted_ip', @$_SERVER['REMOTE_ADDR']);
+		$invite->save();
+
+		$u->addSessionMessage('Your invitation has been accepted.');
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_sappurl('crm');
+	}
+
+	/**
+	 * Invite new users
+	 */
+	public function inviteEvent($req, &$t) {
+		$u = $req->getUser();
+
+		$session = Cgn_Session::getSessionObj();
+		$accountId = $session->get('crm_acct_id');
+		if ($accountId < 1) {
+			$account = Crm_Acct::findSupportAccount($u);
+			$accountId  = $account->getPrimaryKey();
+		}
+
+		$invite = new Cgn_DataItem('crm_invite');
+		$invite->set('created_on', time());
+		$invite->set('crm_acct_id', $accountId);
+		$invite->set('inviter_id',  $u->userId);
+		$invite->set('email',       $req->cleanString('member_email'));
+		$invite->set('ticket_code', cgn_uuid());
+		$invite->save();
+
+
+		// * msg_name        is the subject
+		// * envelopeFrom    is the from line
+		// * envelopeTo      is the to line
+		// * envelopeReplyTo is the reply to line
+		// * body            is the plain text
+		Cgn::loadLibrary('Mxq::lib_cgn_mxq');
+		//send email
+		$msg = new Cgn_Mxq_Message_Email();
+		$msg->setName('CRM Invitiation Receipt.');
+		$msg->setBody("You have been invited to join the CRM messaging system at [pending site].\n".cgn_sappurl('crm', 'acct', 'acceptinvite', array('tk'=>$invite->get('ticket_code'))));
+		$msg->sendEmail();
+
+		$u->addSessionMessage('Your invitation has been sent.');
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_appurl('crm', 'acct');
+	}
+
+
+	/**
+	 */
+	public function applyEvent($req, &$t) {
 		$u = $req->getUser();
 
 		$newAcct = new Crm_Acct();
@@ -122,6 +258,36 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		$supportAccounts = $finder->find();
 		return $supportAccounts[0];
 	}
+
+
+	/**
+	 * Load and display a form to allow invitations by email
+	 */
+	public function _loadInviteForm($u) {
+		$f = new Cgn_Form('form_invite_member');
+		$f->width = '660px';
+		$f->action = cgn_appurl('crm', 'acct', 'invite');
+		//$f->label = 'Invite organization members';
+		$f->appendElement(new Cgn_Form_ElementInput('member_email', 'E-mail Address'), $values['member_email']);
+		return $f;
+
+	}
+
+	/**
+	 * Load and display a form to take a password for registration
+	 */
+	public function _loadPasswordForm($tk) {
+		$f = new Cgn_Form('form_collect_pwd');
+		$f->width = '660px';
+		$f->action = cgn_appurl('crm', 'acct', 'activate');
+		$f->label = 'Confirm your password to create a new account';
+		$f->appendElement(new Cgn_Form_ElementPassword('pwd1', 'Password'));
+		$f->appendElement(new Cgn_Form_ElementPassword('pwd2', 'Repeat Password'));
+		$f->appendElement(new Cgn_Form_ElementHidden('tk'), $tk);
+		return $f;
+
+	}
+
 }
 
 ?>
