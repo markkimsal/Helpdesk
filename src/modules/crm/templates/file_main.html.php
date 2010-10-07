@@ -4,7 +4,7 @@ echo "<h2>".$t['acctName']."</h2>";
 
 <div id="crm_main">
 
-<div style="text-align:left;float:right;width:83%">
+<div id="crm_main_sub">
 
 		<div class="data_table_pager">
 		<form method="GET" action="<?=$t['baseUrl'];?>" style="display:inline;">
