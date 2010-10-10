@@ -91,9 +91,11 @@ No files.
 			Uploaded on: <?php echo date('Y-m-d', $_issue->get('published_on'));?>
 		</p>
 		<p>
-		<?= $_issue->get('description');?>
+		<?= $_issue->get('description');?>&nbsp;
 		</p>
+		<br style="clear:right;"/>
 		</div>
+
 <?php
 	}
 }

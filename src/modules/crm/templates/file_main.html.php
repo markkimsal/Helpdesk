@@ -48,8 +48,9 @@ No files.
 		</p>
 
 		<p>
-		<?= $_issue->get('description');?>
+		<?= $_issue->get('description');?>&nbsp;
 		</p>
+		<br style="clear:right;"/>
 		</div>
 <?php
 	}
