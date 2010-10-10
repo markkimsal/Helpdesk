@@ -121,6 +121,48 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 	}
 
 	/**
+	 *  Save the content item and immediately publish with the content publisher
+	 */
+	public function saveUploadEvent(&$req, &$t) {
+		$id = $req->cleanInt('id');
+		if ($id > 0 ) {
+			$content = new Cgn_Content($id);
+		} else {
+			$content = new Cgn_Content($id);
+			$content->dataItem->type = 'file';
+			//save mime
+			$mime = $req->cleanString('mime');
+		}
+
+		if (isset($_FILES['filename'])
+			&& $_FILES['filename']['error'] == UPLOAD_ERR_OK) {
+			$content->dataItem->binary = file_get_contents($_FILES['filename']['tmp_name']);
+		} else {
+			trigger_error('file not uploaded properly ('.$_FILES['filename']['error'].')');
+			return false;
+		}
+		//encode the binary data properly (nulls and quotes)
+		$content->dataItem->_bins['binary'] = 'binary';
+		$content->setTitle( $req->cleanString('title') );
+		$content->dataItem->caption = $req->cleanString('description');
+		$content->dataItem->filename = trim($_FILES['filename']['name']);
+		$content->dataItem->mime = trim($_FILES['filename']['type']);
+
+		$content->dataItem->edited_on = time();
+		$content->dataItem->sub_type = 'crm_file_download';
+		$content->dataItem->type = 'file';
+		$newid = $content->save();
+
+
+		$plugin = $content->getPublisherPlugin();
+		$newFile = $plugin->publishAsCustom($content);
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_sappurl(
+			$this->moduleName, $this->serviceName, 'edit', array('id'=>$newFile->getPrimaryKey()));
+	}
+
+
+	/**
 	 * Function to create a default form
 	 */
 	protected function _makeCreateForm(&$t, $dataModel) {
@@ -164,12 +206,9 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 				unset($widget);
 				continue;
 			}
-			/*
-			 * not used
-			if ($v == '' && isset($acctValues[$k])) {
-				$v = $acctValues[$k];
-			}
-			 */
+			if ($k == 'cgn_guid') continue;
+			if ($k == 'cgn_content_id') continue;
+			if ($k == 'cgn_content_version') continue;
 
 			//don't add the primary key if we're in edit mode
 			if ($editMode == TRUE) {
@@ -189,23 +228,13 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 	}
 
 	protected function _makeCreateFields($f, $dataModel) {
-		$widget = new Cgn_Form_ElementInput('title');
-		$widget->size = 55;
-		$f->appendElement($widget, 'New File');
-		unset($widget);
-
-		/*
-		$widget = new Cgn_Form_ElementInput('title');
-		$widget->size = 55;
-		$f->appendElement($widget, 'New File');
-		unset($widget);
-		 */
-
-//		$f->action = cgn_adminurl('content','upload','saveUpload');
+		$f->action = cgn_sappurl('crmtech', 'file', 'saveUpload');
 		$f->label = 'Choose a file from your computer to upload.';
 		$f->appendElement(new Cgn_Form_ElementHidden('MAX_FILE_SIZE'),2000000);
 		$f->appendElement(new Cgn_Form_ElementFile('filename','Upload',55));
 		$titleInput = new Cgn_Form_ElementInput('title','Save As',55);
+		$titleInput->size = 55;
+		$f->appendElement($titleInput, 'New File');
 
 	}
 
