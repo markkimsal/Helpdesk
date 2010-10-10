@@ -18,6 +18,14 @@ You can invite more members of your organization to join your account.
 echo $t['inviteForm']->toHtml();
 ?>
 
+<h2>Pending invitations</h2>
+
+
+<?php
+echo $t['inviteTable']->toHtml();
+?>
+
+
 </div>
 </div>
 

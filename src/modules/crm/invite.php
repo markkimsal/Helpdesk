@@ -14,7 +14,7 @@ Cgn::loadModLibrary("Crm::Crm_Acct");
  *
  * Provide application functionality
  */
-class Cgn_Service_Crm_Acct extends Cgn_Service {
+class Cgn_Service_Crm_Invite extends Cgn_Service {
 
 	public $requireLogin = FALSE;
 	public $usesConfig   = TRUE;
@@ -24,40 +24,6 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		Cgn_Template::addSiteCss('crm_screen.css');
 	}
 
-	/**
-	 * Show some account info and a form to invite new users
-	 */
-	public function mainEvent($req, &$t) {
-		Cgn::loadModLibrary('Crm::Crm_Acct');
-		$u = $req->getUser();
-		//find cached account ID
-		$accountId = $req->getSessionVar('crm_acct_id');
-		if (!$accountId) {
-			$account = Crm_Acct::findSupportAccount($u);
-			if ($account) {
-				$accountId = $account->getPrimaryKey();
-			} else {
-				$u->addMessage('Permission denied', 'msg_warn');
-				return false;
-			}
-		} else {
-			$account = new Cgn_DataItem('crm_acct');
-			$account->load($accountId);
-		}
-		$t['acctName'] = $account->get('org_name');
-		$t['acctId'] = $accountId;
-
-
-		$t['inviteForm'] = $this->_loadInviteForm($u);
-
-		$finder = new Cgn_DataItem('crm_invite');
-		$finder->_cols = array('crm_invite_id', 'email');
-		$finder->andWhere('crm_acct_id', $accountId);
-		$finder->_rsltByPkey = false;
-		$invites = $finder->findAsArray();
-
-		$t['inviteTable'] = $this->_loadInviteTable($invites);
-	}
 
 	/**
 	 * Accept invitations
@@ -137,6 +103,92 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		$u->addSessionMessage('Your invitation has been accepted.');
 		$this->presenter = 'redirect';
 		$t['url'] = cgn_sappurl('crm');
+	}
+
+	/**
+	 * Invite new users
+	 *
+	 */
+	public function inviteEvent($req, &$t) {
+		$u = $req->getUser();
+
+		$session = Cgn_Session::getSessionObj();
+		$accountId = $session->get('crm_acct_id');
+		if ($accountId < 1) {
+			$account = Crm_Acct::findSupportAccount($u);
+			$accountId  = $account->getPrimaryKey();
+		}
+		$member_email = $req->cleanString('member_email');
+
+		//check email validity
+		$finder = new Cgn_DataItem('cgn_user');
+		$finder->andWhere('username', $member_email);
+		$finder->orWhereSub('email', $member_email);
+		$rows = $finder->findAsArray();
+		if (count($rows)) {
+			$u->addSessionMessage('Email address not valid');
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_appurl('crm', 'acct');
+			return;
+		}
+		$finder = new Cgn_DataItem('crm_invite');
+		$finder->andWhere('email', $member_email);
+		$finder->andWhere('crm_acct_id', $accountId);
+		$rows = $finder->findAsArray();
+		if (count($rows)) {
+			$u->addSessionMessage('Email address not valid');
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_appurl('crm', 'acct');
+			return;
+		}
+
+		$invite = new Cgn_DataItem('crm_invite');
+		$invite->set('created_on', time());
+		$invite->set('crm_acct_id', $accountId);
+		$invite->set('inviter_id',  $u->userId);
+		$invite->set('email',       $member_email);
+		$invite->set('ticket_code', cgn_uuid());
+		$invite->save();
+
+
+		// * msg_name        is the subject
+		// * envelopeFrom    is the from line
+		// * envelopeTo      is the to line
+		// * envelopeReplyTo is the reply to line
+		// * body            is the plain text
+		Cgn::loadLibrary('Mxq::lib_cgn_mxq');
+		//send email
+		$msg = new Cgn_Mxq_Message_Email();
+		$msg->setName('Helpdesk Invitiation Request from '. $siteName);
+		$body  = "You have been invited to join the help desk messaging system at $siteName.\n";
+		$body .= "To register a new account follow the link below.\n";
+		$body .= cgn_sappurl('crm', 'acct', 'acceptinvite', array('tk'=>$invite->get('ticket_code')));
+		$msg->setBody($body);
+
+		$from = Cgn_ObjectStore::getConfig('config://default/email/defaultfrom');
+		$msg->envelopeTo   = $invite->get('email');
+		$msg->envelopeFrom = $from;
+		$msg->sendEmail();
+
+
+		$u->addSessionMessage('Your invitation has been sent.');
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_appurl('crm', 'acct');
+	}
+
+	public function resendEvent($req, &$t) {
+		$u = $req->getUser();
+		$u->addSessionMessage('Resend not implemented');
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_appurl('crm', 'acct');
+
+	}
+
+	public function deleteEvent($req, &$t) {
+		$u = $req->getUser();
+		$u->addSessionMessage('Delete not implemented');
+		$this->presenter = 'redirect';
+		$t['url'] = cgn_appurl('crm', 'acct');
 	}
 
 
@@ -236,7 +288,7 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		$f = new Cgn_Form('form_invite_member');
 		$f->layout = new Cgn_Form_Layout_Dl();
 		$f->width = '400px';
-		$f->action = cgn_appurl('crm', 'invite', 'invite');
+		$f->action = cgn_appurl('crm', 'acct', 'invite');
 		//$f->label = 'Invite organization members';
 		$f->appendElement(new Cgn_Form_ElementInput('member_email', 'E-mail Address'), $values['member_email']);
 		return $f;
