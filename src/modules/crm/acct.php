@@ -161,9 +161,17 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		Cgn::loadLibrary('Mxq::lib_cgn_mxq');
 		//send email
 		$msg = new Cgn_Mxq_Message_Email();
-		$msg->setName('CRM Invitiation Receipt.');
-		$msg->setBody("You have been invited to join the CRM messaging system at [pending site].\n".cgn_sappurl('crm', 'acct', 'acceptinvite', array('tk'=>$invite->get('ticket_code'))));
+		$msg->setName('Helpdesk Invitiation Request from '. $siteName);
+		$body  = "You have been invited to join the help desk messaging system at $siteName.\n";
+		$body .= "To register a new account follow the link below.\n";
+		$body .= cgn_sappurl('crm', 'acct', 'acceptinvite', array('tk'=>$invite->get('ticket_code')));
+		$msg->setBody($body);
+
+		$from = Cgn_ObjectStore::getConfig('default://email/defaultfrom');
+		$msg->envelopeTo   = $invite->get('email');
+		$msg->envelopeFrom = $from;
 		$msg->sendEmail();
+
 
 		$u->addSessionMessage('Your invitation has been sent.');
 		$this->presenter = 'redirect';
@@ -280,7 +288,7 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		$f = new Cgn_Form('form_collect_pwd');
 		$f->width = '660px';
 		$f->action = cgn_appurl('crm', 'acct', 'activate');
-		$f->label = 'Confirm your password to create a new account';
+		$f->label = 'Pick a password for your brand new account.';
 		$f->appendElement(new Cgn_Form_ElementPassword('pwd1', 'Password'));
 		$f->appendElement(new Cgn_Form_ElementPassword('pwd2', 'Repeat Password'));
 		$f->appendElement(new Cgn_Form_ElementHidden('tk'), $tk);
