@@ -82,7 +82,7 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 
 		$newUser = new Cgn_User();
 		$newUser->username =  $invite->get('email');
-		$newUser->mail     =  $invite->get('email');
+		$newUser->email    =  $invite->get('email');
 		$newUser->setPassword( $req->cleanString('pwd1') );
 		$result = Cgn_User::registerUser($newUser);
 		$newUser->bindSession();
@@ -162,7 +162,7 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		$msg->setName('Helpdesk Invitiation Request from '. $siteName);
 		$body  = "You have been invited to join the help desk messaging system at $siteName.\n";
 		$body .= "To register a new account follow the link below.\n";
-		$body .= cgn_sappurl('crm', 'acct', 'acceptinvite', array('tk'=>$invite->get('ticket_code')));
+		$body .= cgn_sappurl('crm', 'invite', 'acceptinvite', array('tk'=>$invite->get('ticket_code')));
 		$msg->setBody($body);
 
 		$from = Cgn_ObjectStore::getConfig('config://default/email/defaultfrom');
@@ -301,7 +301,7 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 	public function _loadPasswordForm($tk) {
 		$f = new Cgn_Form('form_collect_pwd');
 		$f->width = '660px';
-		$f->action = cgn_appurl('crm', 'acct', 'activate');
+		$f->action = cgn_appurl('crm', 'invite', 'activate');
 		$f->label = 'Pick a password for your brand new account.';
 		$f->appendElement(new Cgn_Form_ElementPassword('pwd1', 'Password'));
 		$f->appendElement(new Cgn_Form_ElementPassword('pwd2', 'Repeat Password'));
