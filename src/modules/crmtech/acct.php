@@ -11,9 +11,8 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 
 	public $representing = "Account";
 	public $pageTitle    = 'CRM Accounts';
-	public $dataItemName = 'crm_acct';
 	public $dataModelName = 'Crm_Acct';
-	//
+
 	public $tableHeaderList = array('ID', 'Company Name', 'Start Date');
 	public $tableColList    = array('crm_acct_id', 'org_name', 'approved_on');
 	public $tablePaged      = TRUE;
@@ -67,10 +66,12 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 	}
 
 
-	function saveEvent($req, &$t) {
+	public function saveEvent($req, &$t) {
 		parent::saveEvent($req, $t);
-		$this->item->set('approved_on', time());
-		$this->item->save();
+		if ($this->item->get('approved_on') == 0) {
+			$this->item->set('approved_on', time());
+			$this->item->save();
+		}
 	}
 
 	/**
