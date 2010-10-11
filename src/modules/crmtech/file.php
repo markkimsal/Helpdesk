@@ -156,7 +156,7 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 		}
 		//encode the binary data properly (nulls and quotes)
 		$content->dataItem->_bins['binary'] = 'binary';
-		$content->setTitle( $req->cleanString('title') );
+		$content->setTitle( $req->cleanString('file_title') );
 		$content->dataItem->caption = $req->cleanString('description');
 		$content->dataItem->filename = trim($_FILES['filename']['name']);
 		$content->dataItem->mime = trim($_FILES['filename']['type']);
@@ -245,7 +245,7 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 		$f->label = 'Choose a file from your computer to upload.';
 		$f->appendElement(new Cgn_Form_ElementHidden('MAX_FILE_SIZE'),2000000);
 		$f->appendElement(new Cgn_Form_ElementFile('filename','Upload',55));
-		$titleInput = new Cgn_Form_ElementInput('title','Save As',55);
+		$titleInput = new Cgn_Form_ElementInput('file_title','Save As',55);
 		$titleInput->size = 55;
 		$f->appendElement($titleInput, 'New File');
 
