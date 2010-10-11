@@ -79,8 +79,6 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 		//make page title 
 		$this->_makePageTitle($t);
 
-		//make toolbar
-		$this->_makeToolbar($t);
 		$c = $this->dataModelName;
 		$this->dataModel = new $c();
 		$this->dataModel->dataItem->_cols = array(
@@ -94,9 +92,24 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 			'caption');
 		$this->dataModel->load($req->cleanInt('id'));
 
+
+		//make toolbar
+		$this->_makeToolbar($t);
+
 		//make the form
 		$f = $this->_makeEditForm($t, $this->dataModel);
 		$this->_makeFormFields($f, $this->dataModel, TRUE);
+	}
+
+	protected function _makeToolbar(&$t) {
+		parent::_makeToolbar($t);
+		if ($this->dataModel == null) { return; }
+
+		$btn1 = new Cgn_HtmlWidget_Button(
+			cgn_sappurl($this->moduleName, $this->serviceName, 'del',
+				array('crm_file_id'=>$this->dataModel->get('crm_file_id'), 'table'=>'crm_file')
+			), "Delete This ".ucfirst(strtolower($this->representing)));
+		$t['toolbar']->addButton($btn1);
 	}
 
 	protected function _makeTableRow($d) {
