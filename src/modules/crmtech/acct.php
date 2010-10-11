@@ -190,6 +190,7 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 			if ($editMode == TRUE) {
 				if ($k == 'id' || $k == $dataModel->get('_table').'_id') continue;
 			}
+			$v = $this->formatValue($k, $v, $dataModel);
 			$widget = new Cgn_Form_ElementInput($k);
 			$widget->size = 55;
 			$f->appendElement($widget, $v);
