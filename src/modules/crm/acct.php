@@ -236,7 +236,7 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		$f = new Cgn_Form('form_invite_member');
 		$f->layout = new Cgn_Form_Layout_Dl();
 		$f->width = '400px';
-		$f->action = cgn_appurl('crm', 'invite', 'invite');
+		$f->action = cgn_sappurl('crm', 'invite', 'invite');
 		//$f->label = 'Invite organization members';
 		$f->appendElement(new Cgn_Form_ElementInput('member_email', 'E-mail Address'), $values['member_email']);
 		return $f;
