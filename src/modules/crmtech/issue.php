@@ -212,6 +212,8 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 
 		$t['account'] = new Cgn_DataItem('crm_acct');
 		$t['account']->load($this->dataModel->get('crm_acct_id'));
+
+		$t['replyForm'] = $this->_loadReplyForm($statusNames, $this->dataModel);
 	}
 
 	/**
@@ -535,6 +537,41 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 			$emails[ $row->get('cgn_user_id') ] = $row->get('email');
 		}
 		return $emails;
+	}
+
+
+	/**
+	 * Show a quick reply form
+	 */
+	protected function _loadReplyForm($statusList, $issue) {
+		$values = $issue->valuesAsArray();
+
+		$f = new Cgn_Form('reply_'. $issue->getPrimaryKey());
+		$f->layout = new Cgn_Form_Layout_Dl();
+		$f->width = '40em';
+		$f->action = cgn_sappurl('crmtech','issue','saveReply');
+
+
+		$widget = new Cgn_Form_ElementText('message', 'Reply', 7, 60);
+		$f->appendElement($widget);
+
+		$widget = new Cgn_Form_ElementSelect('status_id', 'Status');
+		$widget->size = 1;
+		foreach ($statusList as $_status) {
+			$widget->addChoice(
+				Crm_Issue_Model::_getStatusLabelStatic($_status),
+				 $_status);
+		}
+		if (isset($values['status_id'])) {
+			$widget->setValue((int)$values['status_id']);
+		}
+		$f->appendElement($widget, $v);
+		unset($widget);
+
+		$hidden = new Cgn_Form_ElementHidden('thread_id');
+		$f->appendElement($hidden, $issue->getPrimaryKey());
+		return $f;
+	
 	}
 
 }
