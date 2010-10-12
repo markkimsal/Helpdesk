@@ -5,7 +5,7 @@ echo $t['toolbar']->toHtml();
 ?>
 
 
-<a href="<?php echo cgn_appurl('crm');?>">go to CRM</a>
+<a href="<?php echo cgn_appurl('crm');?>">View customer interface</a>
 
 <h3 style="padding-top:.5em;">Find Questions by Status</h3>
 <?php

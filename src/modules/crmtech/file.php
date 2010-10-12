@@ -39,7 +39,7 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 		Cgn_Template::setPageTitle('CRM Tech Files');
 		Cgn_Template::addSiteCss('crm_screen.css');
 		Cgn_Template::addSiteCss('crmtech_screen.css');
-		$t['pageNav'] = '<div><a href="'.cgn_appurl('crmtech').'">Back to CRM home</a></div>';
+		$t['pageNav'] = '<div><a href="'.cgn_appurl('crmtech').'">Back to tech dashboard</a></div>';
 	}
 
 	/**
