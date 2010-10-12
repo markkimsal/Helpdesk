@@ -19,8 +19,8 @@ echo $t['ownerTable']->toHtml();
 <br/>
 
 <div id="new_question_form" style="display:visible;">
-<form method="POST" action="<?=cgn_sappurl('crmtech', 'issue', 'save');?>">
-<textarea name="ctx" cols="60" rows="7"></textarea>
+<form method="POST" action="<?=cgn_sappurl('crmtech', 'issue', 'saveReply');?>">
+<textarea name="message" cols="60" rows="7"></textarea>
 <br/>
 <input type="submit" name="sbmt_button" id="new_question_btn" value="Post Question" style="display:block;"/>
 <input type="hidden" name="redir" id="redir_id" value="issue"/>
