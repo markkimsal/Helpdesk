@@ -6,7 +6,8 @@
 class Crm_Acct extends Cgn_Data_Model {
 
 	public $tableName =  'crm_acct';
-	public $sharingModeRead = '';
+	public $sharingModeRead   = '';
+	public $sharingModeDelete = '';
 
 	public function initDataItem() {
 		parent::initDataItem();
@@ -115,6 +116,29 @@ class Crm_Acct extends Cgn_Data_Model {
 	 */
 	public function agreeTos() {
 		return ($this->get('agreement_date') >0 && $this->get('agreement_ip_addr') != '');
+	}
+
+	/**
+	 * Delete this crm_account and all related crm files, issues, and invitations
+	 */
+	public function deleteAccount() {
+		if ($this->get('crm_acct_id') < 1) {
+			return false;
+		}
+		$issueDeleter = new Cgn_DataItem('crm_issue');
+		$issueDeleter->andWhere('crm_acct_id', $this->get('crm_acct_id'));
+		$issueDeleter->delete();
+
+		$inviteDeleter = new Cgn_DataItem('crm_invite');
+		$inviteDeleter->andWhere('crm_acct_id', $this->get('crm_acct_id'));
+		$inviteDeleter->delete();
+
+		$fileDeleter = new Cgn_DataItem('crm_file');
+		$fileDeleter->andWhere('crm_acct_id', $this->get('crm_acct_id'));
+		$fileDeleter->delete();
+
+		$this->delete();
+		return true;
 	}
 }
 
