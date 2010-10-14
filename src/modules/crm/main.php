@@ -44,11 +44,20 @@ class Cgn_Service_Crm_Main extends Cgn_Service {
 			$account = new Cgn_DataItem('crm_acct');
 			$account->load($accountId);
 		}
+
+		//if no account, but user is crmtech, bump to crmtech screen
+		if (!$account && $t['isTech'] == true) {
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_sappurl('crmtech');
+			return TRUE;
+		}
+
 		if (!$account) {
 			$newTicket = new Cgn_SystemTicket('crm', 'apply', 'main');
 			Cgn_SystemRunner::stackTicket($newTicket);
 			return TRUE;
 		}
+
 		$t['acctName'] = $account->get('org_name');
 		$t['acctId'] = $accountId;
 
