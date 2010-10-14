@@ -4,7 +4,8 @@
 	padding-bottom:1em;
 	padding-left:1.4em;
 	float:right;
-	width:85%;
+	width:80%;
+	overflow:hidden;
 }
 
 #crm_main p {
@@ -27,15 +28,13 @@ background-color: #777;
 .issue-post {
 	border-top:1px solid #eee;
 	padding-top:7px;
+ 	border:3px solid #fff;
 	width:40em;
 }
-
-.issue-post-hover {
-	border-top:3px solid #EEF;
-}
-
 /** wrapper for the first post **/
 .issue-post-first {
+ 	border:3px solid #fff;
+	width:40em;
 }
 
 .issue-post-controls form {
@@ -56,7 +55,6 @@ margin-bottom:1em;
 .issue-post-content iframe{
 width:100%;
 }
-
 .issue-post-reply {
  border:3px solid #fff;
  width:40em;clear:right;padding:.25em;
@@ -90,9 +88,10 @@ margin-right:.5em;
 /* Menu */
 .crm_menu {
 	margin: 0; padding:none;
+	float:left;
 	font: bold 12px/26px Verdana, Arial, Tahoma, Sans-serif;
 	height: 26px;
-	width:10%;
+	width:7.5em;
 }
 .crm_menu ul {
 	margin: none; padding:none;
