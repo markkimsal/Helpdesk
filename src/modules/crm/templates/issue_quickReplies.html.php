@@ -42,6 +42,3 @@ No replies.
 	}
 }
 ?>
-</div>
-
-
