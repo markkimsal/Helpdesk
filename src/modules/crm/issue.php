@@ -243,6 +243,13 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 		}
 
 		$comment = $req->cleanMultiLine('ctx');
+		if (trim($comment) == '') {
+			//don't save a blank comment
+			$t['url'] = cgn_sappurl('crm');
+			$this->presenter = 'redirect';
+			return;
+		}
+
 		$u       = $req->getUser();
 		$name    = $u->getDisplayName();
 
