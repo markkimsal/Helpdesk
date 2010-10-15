@@ -27,12 +27,12 @@ echo "<h2>Question From ".$t['account']->get('org_name')."</h2>";
 		<div id="content_<?=$issue->getPrimaryKey();?>" class="issue-post-content">
 		<?php echo $issue->get('message');?>
 		</div>
+		</div>
 
 <?php
 echo $t['replyForm']->toHtml();
 ?>
 
-		</div>
 
 
 <?php
@@ -91,7 +91,7 @@ No replies.
 			}
 			t.css('border', '3px solid #CCF');
 			$(".issue-post-reply-delete", t).css('top', (t.position().top+5)+'px');
-			$(".issue-post-reply-delete", t).css('right', (t.position().left+400)+'px');
+			$(".issue-post-reply-delete", t).css('left', (t.position().left+t.width()-20)+'px');
 			$(".issue-post-reply-delete", t).css('position', 'absolute');
 			$(".issue-post-reply-delete", t).css('display', '');
 			e.preventDefault();
@@ -117,6 +117,7 @@ No replies.
 				t = t.parent();
 			}
 			t.removeClass('issue-post-hover');
+			t.css('border', '3px solid #FFF');
 			$(".issue-post-delete", t).css('display', 'none');
 			e.preventDefault();
 			e.stopPropagation();
@@ -130,8 +131,9 @@ No replies.
 				t = t.parent();
 			}
 			t.addClass('issue-post-hover');
+			t.css('border', '3px solid #CCF');
 			$(".issue-post-delete", t).css('top', (t.position().top+5)+'px');
-			$(".issue-post-delete", t).css('right', (t.position().left+400)+'px');
+			$(".issue-post-delete", t).css('left', (t.position().left+t.width()-20)+'px');
 			$(".issue-post-delete", t).css('position', 'absolute');
 			$(".issue-post-delete", t).css('display', '');
 			e.preventDefault();
