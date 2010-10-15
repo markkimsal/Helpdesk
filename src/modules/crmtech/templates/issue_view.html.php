@@ -21,7 +21,7 @@ echo "<h2>Question From ".$t['account']->get('org_name')."</h2>";
 		</div>
 		
 		<div class="issue-post-delete" style="display:none;">
-		<button title="delete" data-id="<?php echo $issue->getPrimaryKey();?>" onclick="deleteThread(this);">X</button>
+		<button style="background-color:#0A3767;color:#FFF;" title="delete" data-id="<?php echo $issue->getPrimaryKey();?>" onclick="deleteThread(this);">X</button>
 		</div>
 
 		<div id="content_<?=$issue->getPrimaryKey();?>" class="issue-post-content">
@@ -53,7 +53,7 @@ No replies.
 		</div>
 
 		<div class="issue-post-reply-delete" style="display:none;">
-		<button title="delete" data-id="<?php echo $_issue->getPrimaryKey();?>" onclick="deleteReply(this);">X</button>
+		<button style="background-color:#0A3767;color:#FFF;" title="delete" data-id="<?php echo $_issue->getPrimaryKey();?>" onclick="deleteReply(this);">X</button>
 		</div>
 	
 		<div id="loaded_<?=$_issue->getPrimaryKey();?>" class="issue-post-content">
@@ -151,7 +151,7 @@ No replies.
 		$.ajax({
 			async:true,
 			data: "id="+delid+"&xhr=1",
-			url: "<?php echo cgn_appurl('crmtech', 'issue', 'delreply');?>",
+			url: "<?php echo cgn_sappurl('crmtech', 'issue', 'delreply');?>",
 			success: function(){
 				$("#reply_"+delid).empty().remove();
 			}});
@@ -166,7 +166,7 @@ No replies.
 		$.ajax({
 			async:true,
 			data: "id="+delid+"&xhr=1",
-			url: "<?php echo cgn_appurl('crmtech', 'issue', 'del');?>",
+			url: "<?php echo cgn_sappurl('crmtech', 'issue', 'del');?>",
 			success: function(){
 				window.location.href="<?php echo cgn_sappurl('crmtech');?>";
 			}});
