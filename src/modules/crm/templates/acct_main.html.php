@@ -31,10 +31,10 @@ echo $t['inviteTable']->toHtml();
 
 <div class="crm_menu">
 <ul >
-<li><a href="<?=cgn_appurl('crm', '', '', '', 'https');?>">Overview</a></li>
-<li><a href="<?=cgn_appurl('crm', 'issue', '', '', 'https');?>">Questions</a></li>
-<li><a href="<?=cgn_appurl('crm', 'file', '', '', 'https');?>">Files</a></li>
-<li><a href="<?=cgn_appurl('crm', 'acct', '', '', 'https');?>">Members</a></li>
+<li><a href="<?=cgn_sappurl('crm');?>">Overview</a></li>
+<li><a href="<?=cgn_sappurl('crm', 'issue');?>">Questions</a></li>
+<li><a href="<?=cgn_sappurl('crm', 'file');?>">Files</a></li>
+<li><a href="<?=cgn_sappurl('crm', 'acct');?>">Members</a></li>
 <!--
 <li><a href="#">Corkboard</a></li>
 -->
