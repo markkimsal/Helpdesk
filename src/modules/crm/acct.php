@@ -50,6 +50,7 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 
 		$t['inviteForm'] = $this->_loadInviteForm($u);
 
+		//invite table
 		$finder = new Cgn_DataItem('crm_invite');
 		$finder->_cols = array('crm_invite_id', 'email');
 		$finder->andWhere('crm_acct_id', $accountId);
@@ -57,6 +58,20 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 		$invites = $finder->findAsArray();
 
 		$t['inviteTable'] = $this->_loadInviteTable($invites);
+
+		//member table
+		$finder = new Cgn_DataItem('cgn_user');
+		$finder->_cols= array('username', 'TB.role_code');
+		$finder->hasOne('cgn_user_org_link', 'cgn_user_id', 'TB');
+
+		//TODO: fix hasOne
+		$finder->_relatedSingle[] = array('fk'=>'cgn_account_id', 'ftable'=>'cgn_account', 'falias'=>'TC', 'lk'=>'cgn_org_id', 'ltable'=>'TB');
+		$finder->andWhere('TC.cgn_account_id', $accountId);
+		$finder->_rsltByPkey = false;
+		$members = $finder->findAsArray();
+
+		$t['memberTable'] = $this->_loadMemberTable($members);
+
 	}
 
 
@@ -187,5 +202,21 @@ class Cgn_Service_Crm_Acct extends Cgn_Service {
 
 		return $f;
 	}
+
+
+	/**
+	 * Create a table to show users and their roles
+	 */
+	public function _loadMemberTable($invites) {
+		Cgn::loadLibrary('lib_cgn_mvc');
+		Cgn::loadLibrary('lib_cgn_mvc_table');
+		$dm = new Cgn_Mvc_TableModel($invites);
+		$dm->columns = array('username', 'role_code');
+		$dm->headers = array('Username', 'Role');
+
+		$f = new Cgn_Mvc_TableView($dm);
+		return $f;
+	}
+
 }
 

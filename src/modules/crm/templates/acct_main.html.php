@@ -26,6 +26,15 @@ echo $t['inviteTable']->toHtml();
 ?>
 
 
+
+<h2>Members</h2>
+
+
+<?php
+echo $t['memberTable']->toHtml();
+?>
+
+
 </div>
 </div>
 
