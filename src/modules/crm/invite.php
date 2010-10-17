@@ -203,9 +203,30 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 
 	}
 
+	/**
+	 * Load an existing invite from this users account and resend it
+	 */
 	public function deleteEvent($req, &$t) {
 		$u = $req->getUser();
-		$u->addSessionMessage('Delete not implemented');
+
+		$accountId = $req->getSessionVar('crm_acct_id');
+
+		$invite = new Cgn_DataItem('crm_invite');
+		$invite->set('crm_invite_id', $req->cleanInt('id'));
+		$invite->set('crm_acct_id', $accountId);
+		$invite->loadExisting();
+		//load failed
+		if ($invite->_isNew) {
+			$u->addSessionMessage('Cannot find invitation');
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_appurl('crm', 'acct');
+			return;
+		}
+		$invite->delete();
+
+
+
+		$u->addSessionMessage('Invitation deleted.');
 		$this->presenter = 'redirect';
 		$t['url'] = cgn_appurl('crm', 'acct');
 	}
