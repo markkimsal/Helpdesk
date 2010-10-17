@@ -40,7 +40,6 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 			$ticket = $_tk;
 		}
 		if ($ticket == null) {
-		var_dump($ticket);exit();
 			$u->addSessionMessage('Your invitation may have expired.', 'msg_err');
 			$this->presenter = 'redirect';
 			$t['url'] = cgn_appurl('crm');
@@ -48,7 +47,7 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		}
 
 
-		$t['passwordForm'] = $this->_loadPasswordForm($tkcode);
+		$t['passwordForm'] = $this->_loadPasswordForm($tkcode, $ticket);
 
 		/*
 		$u->addSessionMessage('Your invitation has been accepted.');
@@ -158,6 +157,7 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		// * body            is the plain text
 		Cgn::loadLibrary('Mxq::lib_cgn_mxq');
 		//send email
+		$siteName = Cgn_ObjectStore::getConfig('config://template/site/name');
 		$msg = new Cgn_Mxq_Message_Email();
 		$msg->setName('Helpdesk Invitiation Request from '. $siteName);
 		$body  = "You have been invited to join the help desk messaging system at $siteName.\n";
@@ -176,9 +176,28 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		$t['url'] = cgn_appurl('crm', 'acct');
 	}
 
+	/**
+	 * Load an existing invite from this users account and resend it
+	 */
 	public function resendEvent($req, &$t) {
 		$u = $req->getUser();
-		$u->addSessionMessage('Resend not implemented');
+
+		$accountId = $req->getSessionVar('crm_acct_id');
+
+		$invite = new Cgn_DataItem('crm_invite');
+		$invite->set('crm_invite_id', $req->cleanInt('id'));
+		$invite->set('crm_acct_id', $accountId);
+		$invite->loadExisting();
+		//load failed
+		if ($invite->_isNew) {
+			$u->addSessionMessage('Cannot find invitation');
+			$this->presenter = 'redirect';
+			$t['url'] = cgn_appurl('crm', 'acct');
+			return;
+		}
+		$this->_resendInvite($invite);
+
+		$u->addSessionMessage('Invitation sent to '. htmlentities($invite->get('email')));
 		$this->presenter = 'redirect';
 		$t['url'] = cgn_appurl('crm', 'acct');
 
@@ -189,56 +208,6 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		$u->addSessionMessage('Delete not implemented');
 		$this->presenter = 'redirect';
 		$t['url'] = cgn_appurl('crm', 'acct');
-	}
-
-
-	/**
-	 */
-	public function applyEvent($req, &$t) {
-		$u = $req->getUser();
-
-		$newAcct = new Crm_Acct();
-		$newAcct->dataItem->andWhere('owner_id', $u->getUserId());
-		$newAcct->dataItem->load();
-		if ($newAcct->dataItem->_isNew) {
-			$newAcct->dataItem->created_on = time();
-			$newAcct->dataItem->owner_id = $u->getUserId();
-		} else {
-			//application saved
-			$t['message'] = 'Your application is being processed.';
-			return false;
-		}
-		$newAcct->dataItem->org_name = $req->cleanString('company_name');
-		$newAcct->dataItem->save();
-
-		$defaultEmail = Cgn_ObjectStore::getConfig('config://default/email/contactus');
-		if (Cgn_ObjectStore::hasConfig('config://default/email/replyto')) {
-			$defaultReply = Cgn_ObjectStore::getConfig('config://default/email/replyto');
-		} else {
-			$defaultReply = $defaultEmail;
-		}
-
-		$m = new Cgn_Message_Mail();
-		$m->subject = 'New Support Application';
-		$m->toList = array($defaultEmail);
-		$m->from   = $defaultReply;
-		$m->reply  = $defaultReply;
-		$m->body   = "New support application requested.\n\n";
-		$m->body  .= "Organization name: ". $newAcct->dataItem->get('org_name'). "\n";
-		$m->body  .= "Click to approve: \n".
-				cgn_appurl(
-				   'crmtech', 'acct', 'approve', 
-				   array('id'=>$newAcct->dataItem->get('crm_acct_id')),
-				   'https'
-			   );
-
-		foreach ($req->postvars as $k => $p) {
-			$m->body .= $k .': '.$p."\n";
-		}
-		$m->sendMail();
-
-		$this->presenter = 'redirect';
-		$t['url'] = cgn_appurl('crm', 'acct', 'tos');
 	}
 
 
@@ -298,11 +267,13 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 	/**
 	 * Load and display a form to take a password for registration
 	 */
-	public function _loadPasswordForm($tk) {
+	public function _loadPasswordForm($tk, $invite) {
 		$f = new Cgn_Form('form_collect_pwd');
-		$f->width = '660px';
-		$f->action = cgn_appurl('crm', 'invite', 'activate');
-		$f->label = 'Pick a password for your brand new account.';
+		$f->width      = '660px';
+		$f->action     = cgn_appurl('crm', 'invite', 'activate');
+		$f->formHeader = 'To complete your registration pick a password for your new account.';
+		$f->label      = 'Invitation to Join Our Site';
+		$f->appendElement(new Cgn_Form_ElementLabel('email', 'Email'), $invite->get('email'));
 		$f->appendElement(new Cgn_Form_ElementPassword('pwd1', 'Password'));
 		$f->appendElement(new Cgn_Form_ElementPassword('pwd2', 'Repeat Password'));
 		$f->appendElement(new Cgn_Form_ElementHidden('tk'), $tk);
@@ -332,6 +303,27 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		$f->setColRenderer(2, $url2);
 
 		return $f;
+	}
+
+
+	protected function _resendInvite($invite) {
+		Cgn::loadLibrary('Mxq::lib_cgn_mxq');
+		//send email
+		$siteName = Cgn_ObjectStore::getConfig('config://template/site/name');
+		$msg = new Cgn_Mxq_Message_Email();
+		$msg->setName('Helpdesk Invitiation Request from '. $siteName);
+		$body  = "You have been invited to join the help desk messaging system at $siteName.\n";
+		$body .= "To register a new account follow the link below.\n";
+		$body .= cgn_sappurl('crm', 'invite', 'acceptinvite', array('tk'=>$invite->get('ticket_code')));
+		$msg->setBody($body);
+
+		$from = Cgn_ObjectStore::getConfig('config://default/email/defaultfrom');
+		$msg->envelopeTo   = $invite->get('email');
+		$msg->envelopeFrom = $from;
+		$msg->sendEmail();
+
+
+
 	}
 }
 
