@@ -104,12 +104,30 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 		$dm->data = $dataModel;
 		$t['ownerTable'] = new Cgn_Mvc_TableView($dm);
 
+
+
 		$t['acct_id']    = $this->dataModel->get('crm_acct_id');
 
 		$quest = $this->_findAcctIssues($req->cleanInt('id'));
 		$t['questHeader'] = '<h3>Latest Issues</h3>';
 		$t['quest'] = $this->_makeQuestionTable($quest);
 		$t['quest']->attribs = array('cellpadding'=>'7');
+
+
+		//member table
+		$finder = new Cgn_DataItem('cgn_user');
+		$finder->_cols= array('username', 'TB.role_code');
+		$finder->hasOne('cgn_user_org_link', 'cgn_user_id', 'TB');
+
+		//TODO: fix hasOne
+		$finder->_relatedSingle[] = array('fk'=>'cgn_account_id', 'ftable'=>'cgn_account', 'falias'=>'TC', 'lk'=>'cgn_org_id', 'ltable'=>'TB');
+		$finder->andWhere('TC.cgn_account_id', $this->dataModel->getPrimaryKey());
+		$finder->_rsltByPkey = false;
+		$members = $finder->findAsArray();
+
+		$t['memberTable'] = $this->_loadMemberTable($members);
+
+
 	}
 
 
@@ -334,4 +352,19 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 		return $table;
 	}
 
+
+
+	/**
+	 * Create a table to show users and their roles
+	 */
+	public function _loadMemberTable($invites) {
+		Cgn::loadLibrary('lib_cgn_mvc');
+		Cgn::loadLibrary('lib_cgn_mvc_table');
+		$dm = new Cgn_Mvc_TableModel($invites);
+		$dm->columns = array('username', 'role_code');
+		$dm->headers = array('Username', 'Role');
+
+		$f = new Cgn_Mvc_TableView($dm);
+		return $f;
+	}
 }

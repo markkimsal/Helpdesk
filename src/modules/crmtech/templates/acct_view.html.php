@@ -12,6 +12,12 @@ echo $t['viewTable']->toHtml();
 echo $t['ownerTable']->toHtml();
 ?>
 
+<h3>Members</h3>
+
+<?php
+echo $t['memberTable']->toHtml();
+?>
+
 
 <div>
 
