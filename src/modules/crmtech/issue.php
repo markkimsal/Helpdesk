@@ -54,7 +54,11 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 		array_pop($t['toolbar']->buttons);
 
 		$viewUrl = cgn_appurl('crmtech', 'issue', 'view');
-		$editUrl = cgn_appurl('crmtech', 'issue', 'edit');
+		//this edit link is a bit too confusing right now.  Going to hide it until
+		//it can be fleshed out fully.
+		/*		$editUrl = cgn_appurl('crmtech', 'issue', 'edit'); */
+		$editUrl = $viewUrl;
+
 		$t['dataGrid']->setColRenderer(0, new Cgn_Mvc_Table_ColRenderer_Url($editUrl, array('id'=>0) ));
 		$t['dataGrid']->setColRenderer(2, new Cgn_Mvc_Table_ColRenderer_Url($viewUrl, array('id'=>0) ));
 		return $ret;
@@ -72,6 +76,7 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 		$finder->hasOne('crm_acct', 'crm_acct_id', 'Tacct', 'crm_acct_id');
 		$finder->andWhere('thread_id', 0);
 		$finder->orWhereSub('thread_id', NULL, 'IS');
+		$finder->orderBy('created_on DESC');
 		$req = Cgn_SystemRequest::getCurrentRequest();
 
 		if ($req->cleanInt('status_id')) {
