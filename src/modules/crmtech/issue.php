@@ -76,7 +76,7 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 		$finder->hasOne('crm_acct', 'crm_acct_id', 'Tacct', 'crm_acct_id');
 		$finder->andWhere('thread_id', 0);
 		$finder->orWhereSub('thread_id', NULL, 'IS');
-		$finder->orderBy('created_on DESC');
+		$finder->orderBy('post_datetime DESC');
 		$req = Cgn_SystemRequest::getCurrentRequest();
 
 		if ($req->cleanInt('status_id')) {
