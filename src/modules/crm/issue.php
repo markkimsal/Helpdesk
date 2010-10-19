@@ -360,7 +360,7 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 		$m->toList = $toList;
 		$m->from   = $defaultReply;
 		$m->reply  = $defaultReply;
-		$m->body  .= "Click to read: \n".
+		$m->body  .= "To read the entire thread follow the link below: \n".
 		cgn_appurl(
 			'crmtech', 'issue', 'view',
 			array('id'=>$issueId),
@@ -369,6 +369,4 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 
 		$m->sendMail();
 	}
-
 }
-?>

@@ -285,10 +285,13 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 			}
 		}
 
+		$isReply = FALSE;
 		//use thread account id if there is one
 		if (!$parent->dataItem->_isNew) {
+			$isReply = TRUE;
 			$accountId = $parent->get('crm_acct_id');
 		} else {
+			$isReply = FALSE;
 			$accountId = $req->cleanInt('crm_acct_id');
 		}
 
@@ -309,7 +312,7 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 		$issue->set('thread_id', $thread);
 		$issue->save();
 
-		$this->_alertAccount($thread);
+		$this->_alertAccount($thread, $isReply);
 		$t['url'] = cgn_sappurl('crmtech');
 		$this->presenter = 'redirect';
 	}
@@ -461,7 +464,7 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 		return $finder->loadVisibleList();
 	}
 
-	public function _alertAccount($issueId) {
+	public function _alertAccount($issueId, $isReply=FALSE) {
 		Cgn::loadLibrary('Mail::Lib_Cgn_Message_Mail');
 		$defaultEmail = Cgn_ObjectStore::getConfig('config://default/email/contactus');
 		if (Cgn_ObjectStore::hasConfig('config://default/email/replyto')) {
@@ -475,11 +478,16 @@ class Cgn_Service_Crmtech_Issue extends Cgn_Service_Crud {
 
 		$m = new Cgn_Message_Mail();
 		$m->sendCombinedTo = FALSE;
-		$m->subject = 'New Reply to Support Issue';
+		if ($isReply) {
+			$m->subject = 'New Reply to Support Issue';
+		} else {
+			$m->subject = 'New Support Issue';
+		}
+
 		$m->toList = $emailList;
 		$m->from   = $defaultReply;
 		$m->reply  = $defaultReply;
-		$m->body  .= "Click to read: \n".
+		$m->body  .= "To read the entire thread follow the link below: \n".
 		cgn_appurl(
 			'crm', 'issue', '',
 			'',
