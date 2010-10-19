@@ -48,7 +48,7 @@ No files.
 		</p>
 
 		<p>
-		<?= $_issue->get('description');?>&nbsp;
+		<?= htmlspecialchars($_issue->get('caption'));?>&nbsp;
 		</p>
 		<br style="clear:right;"/>
 		</div>

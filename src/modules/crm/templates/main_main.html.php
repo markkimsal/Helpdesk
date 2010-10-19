@@ -91,7 +91,7 @@ No files.
 			Uploaded on: <?php echo date('Y-m-d', $_issue->get('published_on'));?>
 		</p>
 		<p>
-		<?= $_issue->get('description');?>&nbsp;
+		<?= htmlspecialchars($_issue->get('caption'));?>&nbsp;
 		</p>
 		<br style="clear:right;"/>
 		</div>

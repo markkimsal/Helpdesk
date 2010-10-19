@@ -62,12 +62,13 @@ class Cgn_Service_Crm_File extends Cgn_Service {
 	function _getFiles($accountId, &$t, $page=1) {
 		Cgn::loadModLibrary('Crm::Crm_File');
 		$finder = new Crm_File_Model_List();
-		$finder->dataItem->_cols = array('crm_file_id', 'link_text', 'title', 'published_on', 'cgn_guid');
+		$finder->dataItem->_cols = array('crm_file_id', 'link_text', 'title', 'caption', 'published_on', 'cgn_guid');
 		$finder->dataItem->andWhere('crm_acct_id', $accountId);
+		$finder->dataItem->orderBy('published_on DESC');
 		$finder->dataItem->limit(10, $page-1);
+		$finder->_rsltByPkey = FALSE;
 
 		$t['unlimitedRowCount'] = $finder->dataItem->getUnlimitedCount();
-		$finder->_rsltByPkey = FALSE;
 		return $finder->loadVisibleList();
 	}
 
