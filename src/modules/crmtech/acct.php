@@ -105,7 +105,6 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 		$t['ownerTable'] = new Cgn_Mvc_TableView($dm);
 
 
-
 		$t['acct_id']    = $this->dataModel->get('crm_acct_id');
 
 		$quest = $this->_findAcctIssues($req->cleanInt('id'));
@@ -115,19 +114,15 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 
 
 		//member table
-		$finder = new Cgn_DataItem('cgn_user');
-		$finder->_cols= array('username', 'TB.role_code');
-		$finder->hasOne('cgn_user_org_link', 'cgn_user_id', 'TB');
+		$finder = new Cgn_DataItem('cgn_user_org_link');
+		$finder->_cols= array('TB.username', 'role_code');
+		$finder->hasOne('cgn_user', 'cgn_user_id', 'TB', 'cgn_user_id');
 
-		//TODO: fix hasOne
-		$finder->_relatedSingle[] = array('fk'=>'cgn_account_id', 'ftable'=>'cgn_account', 'falias'=>'TC', 'lk'=>'cgn_org_id', 'ltable'=>'TB');
-		$finder->andWhere('TC.cgn_account_id', $this->dataModel->getPrimaryKey());
+		$finder->andWhere('cgn_org_id', $this->dataModel->get('org_account_id'));
 		$finder->_rsltByPkey = false;
 		$members = $finder->findAsArray();
 
 		$t['memberTable'] = $this->_loadMemberTable($members);
-
-
 	}
 
 
