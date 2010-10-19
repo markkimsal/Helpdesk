@@ -56,6 +56,7 @@ class Cgn_Service_Crmtech_Acct extends Cgn_Service_Crud {
 
 	protected function _loadListData() {
 		$finder = new Cgn_DataItem('crm_acct');
+		$finder->orderBy('org_name ASC');
 		return $finder->findAsArray();
 	}
 
