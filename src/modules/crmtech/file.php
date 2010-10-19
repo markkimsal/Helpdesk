@@ -67,6 +67,7 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 			'caption',
 			'Tacct.org_name');
 		$finder->hasOne('crm_acct', 'crm_acct_id', 'Tacct', 'crm_acct_id');
+		$finder->orderBy('title ASC');
 		return $finder->findAsArray();
 	}
 
