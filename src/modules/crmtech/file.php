@@ -174,6 +174,64 @@ class Cgn_Service_Crmtech_File extends Cgn_Service_Crud {
 			$this->moduleName, $this->serviceName, 'edit', array('id'=>$newFile->getPrimaryKey()));
 	}
 
+	/**
+	 * Delete this file and the content file as well
+	 */
+	public function delEvent($req, &$t) {
+		//load the crm_file so we can get the 
+		//original content item.
+		$crmFile   = new Cgn_DataItem('crm_file');
+		$crmFile->load($req->cleanInt('crm_file_id'));
+
+		if ($crmFile->_isNew) {
+			$req->getUser()->addMessage("Object not Found", 'msg_warn');
+			return FALSE;
+		}
+		$contentId = $crmFile->get('cgn_content_id');
+
+		//if deleting the crm_file didn't work, don't bother with the
+		// cgn_content_item
+		if (parent::delEvent($req, $t) === FALSE) {
+			return false;
+		}
+
+		$table = 'cgn_content';
+		$key   = 'cgn_content';
+
+		$obj   = new Cgn_DataItem($table, $key.'_id');
+		$obj->load($contentId);
+		if ($obj->_isNew) {
+			//ERRCODE 581 missing input
+			$req->getUser()->addMessage("Object not Found", 'msg_warn');
+			return FALSE;
+		}
+
+		$trash = new Cgn_DataItem('cgn_obj_trash');
+		$trash->table   = $table;
+		$trash->content = serialize($obj);
+		if ($obj->title) {
+			$trash->title = $obj->title;
+		} else if ($obj->display_name) {
+			$trash->title = $obj->display_name;
+		}
+
+		$u = $req->getUser();
+		$trash->user_id = $u->userId;
+		$trash->deleted_on = time();
+		$trashId = $trash->save();
+
+		if ($trashId > 0 ) {
+			$obj->delete();
+		}
+		//clean out vars specifically for this request
+		$extraVars = $req->getvars;
+		unset($extraVars['id']);
+		unset($extraVars['table']);
+		unset($extraVars['key']);
+		unset($extraVars[$key.'_id']);
+		//$this->redirectHome($t, $extraVars);
+	}
+
 
 	/**
 	 * Function to create a default form
