@@ -1,20 +1,3 @@
-		<div class="data_table_pager" align="center">
-		See all replies...
-		</div>
-<!--
-		<div class="data_table_pager" align="center">
-		Browse more replies:
-		<a class="issue-comment-pager" href="<?=$t['prevUrl'];?>">
-		<img height="12" class="issue-comment-pager" src="<?=cgn_url();?>media/icons/default/arrow_left_24.png"  border="0" alt="older comments" title="older comments"/>
-		</a> 
-		newer &nbsp;&nbsp; older
-		<a class="issue-comment-pager" href="<?=$t['nextUrl'];?>">
-		<img height="12" class="issue-comment-pager" src="<?=cgn_url();?>media/icons/default/arrow_right_24.png" border="0" alt="newer comments" title="newer comments"/>
-		</a>  
-
-		</div>
--->
-
 
 <?php
 if (count($t['issueList']) < 1) {

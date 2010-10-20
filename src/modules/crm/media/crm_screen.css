@@ -28,12 +28,10 @@ background-color: #777;
 .issue-post {
 	border-top:1px solid #eee;
 	padding-top:7px;
- 	border:3px solid #fff;
 	width:40em;
 }
 /** wrapper for the first post **/
 .issue-post-first {
- 	border:3px solid #fff;
 	width:40em;
 }
 
@@ -49,11 +47,29 @@ margin-bottom:1em;
 /* clear:left; */
 }
 .issue-post-content {
+	clear:right;
 	margin-left:58px;
 }
 
 .issue-post-content iframe{
 width:100%;
+}
+
+.issue-post-comments {
+clear:left;
+margin-top:2em;
+}
+
+.issue-post-comments H5{
+color:#EEE;
+padding:.25em .5em;
+background-color:#777;
+}
+.issue-post-comments-container {
+background-color:#eee;
+border:1px solid black;
+margin-top:-0.2em;
+padding:.5em; 
 }
 .issue-post-reply {
  border:3px solid #fff;

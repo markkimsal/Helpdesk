@@ -183,6 +183,14 @@ class Crm_Issue_Model extends Cgn_Data_Model {
 		return Crm_Issue_Model::_getStatusStyleStatic($this->get('status_id'));
 	}
 
+	public function getReplies() {
+		$finder = new Crm_Issue_Model_List();
+		$finder->dataItem->andWhere('thread_id', $this->getPrimaryKey());
+		$finder->dataItem->sort('post_datetime', 'ASC');
+		$finder->_rsltByPkey = FALSE;
+		return $finder->loadVisibleList();
+	}
+
 	public static function _getStatusStyleStatic($id) {
 		switch($id) {
 			case Crm_Issue_Model::STATUS_NEW:

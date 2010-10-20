@@ -66,6 +66,41 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 		$t['rowCount'] = count($t['issueList']);
 	}
 
+	public function viewEvent($req, &$t) {
+		Cgn::loadModLibrary('Crm::Crm_Acct');
+		Cgn::loadModLibrary('Crm::Crm_Issue');
+		$u = $req->getUser();
+		//find cached account ID
+		$accountId = $req->getSessionVar('crm_acct_id');
+		if (!$accountId) {
+			$account = Crm_Acct::findSupportAccount($u);
+			if ($account) {
+				$accountId = $account->getPrimaryKey();
+			} else {
+				$u->addMessage('Permission denied', 'msg_warn');
+				return false;
+			}
+		} else {
+			$account = new Cgn_DataItem('crm_acct');
+			$account->load($accountId);
+		}
+		$t['acctName'] = $account->get('org_name');
+		$t['acctId'] = $accountId;
+
+
+		$id = $req->cleanInt('id');
+
+		$issue = new Crm_Issue_Model($id);
+		if ($issue->get('crm_acct_id') != $accountId) {
+			$u->addMessage('Permission denied', 'msg_warn');
+			return false;
+		}
+		$t['issue']     = $issue;
+		$t['replyList'] = $issue->getReplies();
+		$this->_textToHtml($t['issue']);
+		$this->_textToHtml($t['replyList']);
+	}
+
 	function quickRepliesEvent($req, &$t) {
 		Cgn::loadModLibrary('Crm::Crm_Acct');
 		$u = $req->getUser();
@@ -153,6 +188,22 @@ class Cgn_Service_Crm_Issue extends Cgn_Service {
 	 * htmlentities and nl2p
 	 */
 	function _textToHtml(&$issues) {
+		if (!is_array($issues)) {
+			$m = htmlentities($issues->get('message'));
+			$p = substr(htmlentities($issues->get('message')), 0, 200);
+			$m = str_replace("\r", "\n", $m);
+			$m = str_replace("\n\n", "\n", $m);
+			$m = ereg_replace("[a-zA-Z]+://([-]*[.]?[a-zA-Z0-9_/-?&%])*", "<a href=\"\\0\">\\0</a>", $m);
+			$m = '<p>'. str_replace("\n\n", "</p><p>", $m).'</p>';
+			$issues->set('message', $m);
+
+			$p = str_replace("\r", "\n", $p);
+			$p = str_replace("\n\n", "\n", $p);
+			$p = '<p>'. str_replace("\n\n", "</p><p>", $p).'</p>';
+			$issues->set('preview', $p);
+			return;
+		}
+
 		foreach ($issues as $_idx => $_i) {
 			$m = htmlentities($_i->get('message'));
 			$p = substr(htmlentities($_i->get('message')), 0, 200);

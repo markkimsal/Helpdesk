@@ -51,24 +51,33 @@ No questions.
 		$issueCssAdditional = strtolower($_issue->getStatusStyle());
 ?>
 
+	<a name="<?php echo $_issue->getPrimaryKey(); ?>"/>
 	<div class="<?=$issueCssClass. ' '.$issueCssAdditional;?>">
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$_issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">
+
 	    <b><?=$_issue->get('user_name');?></b>: <span class="timestamp" style="display:none;"><?=date('c', $_issue->get('post_datetime'));?></span>  <span class="fulldate"><?=date('F d, Y', $_issue->get('post_datetime'));?></span> &mdash; Status: <?=$_issue->getStatusLabel();?><br/>
 		
-		<div id="content_<?=$_issue->getPrimaryKey();?>" class="issue-post-content">
+		<div id="preview_<?=$_issue->getPrimaryKey();?>" class="issue-post-content">
 		<?php echo $_issue->get('preview');?>
+<?php if (strlen($_issue->get('preview')) != strlen($_issue->get('message'))) {  ?>
+			<a class="issue-read-all" id="readall_<?=$_issue->getPrimaryKey();?>" href="#">Read more...</a> 
+<?php } ?>
 		</div>
-		<div id="loaded_<?=$_issue->getPrimaryKey();?>" class="issue-post-content" style="display:none;">
+		<div id="content_<?=$_issue->getPrimaryKey();?>" class="issue-post-content" style="display:none;">
 		<?php echo $_issue->get('message');?>
-
-			<h5 style="color:#EEE; padding:.25em .5em;background-color:#777">Comments: <?=$_issue->getReplyCount();?></h5>
-				<div style="background-color:#eee;border:1px solid black;margin-top:-0.2em;padding:.5em;" id="comments_<?=$_issue->getPrimaryKey();?>"></div>
 		</div>
+
+		</div>
+
+		<div id="loaded_<?=$_issue->getPrimaryKey();?>" class="issue-post-comments" style="display:none;">
+
+		<h5>Comments: <?=$_issue->getReplyCount();?>&nbsp;<?php if ($_issue->getReplyCount() > 3) { ?><span style="margin-left:10em;"><a style="color:white;" href="<?php echo cgn_sappurl('crm', 'issue', 'view', array('id'=>$_issue->getPrimaryKey()));?>">see all replies...</a></span><?php } ?></h5>
+				<div class="issue-post-comments-container" id="comments_<?=$_issue->getPrimaryKey();?>"></div>
 		</div>
 
 		<div class="issue-post-controls">
-			<a class="issue-read-all" id="readall_<?=$_issue->getPrimaryKey();?>" href="#">Read all...</a> | 
+			<a class="issue-read-comments" id="readcomments_<?=$_issue->getPrimaryKey();?>" href="#">Read comments...</a> | 
 			<a class="issue-reply" id="ireply_<?=$_issue->getPrimaryKey();?>" href="#">Reply</a>
 			<br/>
 			<form style="display:none;" method="POST" action="<?=cgn_appurl('crm', 'issue', 'saveReply', '', 'https');?>" id="reply_<?=$_issue->getPrimaryKey();?>">
@@ -119,20 +128,29 @@ No questions.
 		$(".fulldate").css('display', 'none');
 
 
+		$(".issue-read-comments").bind('click', function(e) {
+			var t = e.target.id;
+			var temp = new Array();
+			temp = t.split('_');
+			var id = temp[1];
+			$("#loaded_"+id).toggle();
+			e.preventDefault();
+			//load up comments
+			if ($("#loaded_"+id).css('display') != 'none') {
+				var container = $("#comments_"+id);
+				showLoadingPane(container); 
+				container.load('<?=cgn_appurl('crm', 'issue', 'quickReplies', array('c'=>$t['c'], 'xhr'=>1), 'https');?>id='+id, humanTime);
+			}
+		});
+
 		$(".issue-read-all").bind('click', function(e) {
 			var t = e.target.id;
 			var temp = new Array();
 			temp = t.split('_');
 			var id = temp[1];
+			$("#preview_"+id).toggle();
 			$("#content_"+id).toggle();
-			$("#loaded_"+id).toggle();
 			e.preventDefault();
-//			e.stopPropagation();
-			//load up comments
-			var container = $("#comments_"+id);
-			showLoadingPane(container); 
-			container.load('<?=cgn_appurl('crm', 'issue', 'quickReplies', array('c'=>$t['c'], 'xhr'=>1), 'https');?>id='+id, humanTime);
-			//$("#comments_"+id).attr('src', '<?=cgn_appurl('crm', 'issue', 'quickReplies');?>/id='+id);
 		});
 		$(".issue-reply").bind('click', function(e) {
 			var t = e.target.id;
@@ -150,11 +168,13 @@ No questions.
 			// click the navigation item corresponding to the anchor
 			var myAnchor =  myFile.split('#')[1];
 			$('a[id="readall_' + myAnchor + '"]').click();
+			$('a[id="readcomments_' + myAnchor + '"]').click();
 		}
 		if (myFile.match('ra')) { // the URL contains an anchor
 			// click the navigation item corresponding to the anchor
 			var myAnchor =  myFile.split('ra')[1];
 			$('a[id="readall_' + myAnchor + '"]').click();
+			$('a[id="readcomments_' + myAnchor + '"]').click();
 		}
 
 
