@@ -133,6 +133,7 @@ class Cgn_Service_Crm_Invite extends Cgn_Service {
 		$finder = new Cgn_DataItem('crm_invite');
 		$finder->andWhere('email', $member_email);
 		$finder->andWhere('crm_acct_id', $accountId);
+		$finder->andWhere('accepted_on', NULL, 'IS');
 		$rows = $finder->findAsArray();
 		if (count($rows)) {
 			$u->addSessionMessage('Email address not valid');
