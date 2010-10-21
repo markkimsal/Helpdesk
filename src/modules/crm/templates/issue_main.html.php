@@ -51,7 +51,7 @@ No questions.
 		$issueCssAdditional = strtolower($_issue->getStatusStyle());
 ?>
 
-	<a name="<?php echo $_issue->getPrimaryKey(); ?>"/>
+	<a name="<?php echo $_issue->getPrimaryKey(); ?>"></a>
 	<div class="<?=$issueCssClass. ' '.$issueCssAdditional;?>">
 		<div class="issue-post-metadata">
 		<img src="<?= cgn_appurl('account', 'img', '', '', 'https').$_issue->get('user_id');?>" alt="" class="avatar photo" height="50" width="50">

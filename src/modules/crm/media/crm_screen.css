@@ -28,7 +28,9 @@ background-color: #777;
 .issue-post {
 	border-top:1px solid #eee;
 	padding-top:7px;
+	padding-bottom:0.5em;
 	width:40em;
+	clear:left;
 }
 /** wrapper for the first post **/
 .issue-post-first {
